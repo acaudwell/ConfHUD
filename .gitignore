@@ -1,0 +1,9 @@
+autom4te.cache
+confhud
+debug.log
+config.log
+config.status
+*.d
+*.swp
+Makefile
+
