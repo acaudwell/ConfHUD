@@ -51,7 +51,8 @@ protected:
 
     TextureResource* footer;
 
-    FXFont scrollfont;
+    FXFont font, scrollfont;
+
     std::string scroll_message;
     float scroll_message_width;
     float scroll_message_x;

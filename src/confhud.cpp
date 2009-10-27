@@ -138,6 +138,10 @@ ConfHUD::ConfHUD() {
 
     timetable_viewer = 0;
 
+    font = fontmanager.grab("FreeSans.ttf", 16);
+    font.dropShadow(true);
+    font.roundCoordinates(true);
+
     scrollfont = fontmanager.grab("FreeSans.ttf", 32);
     scrollfont.shadowStrength(0.4);
     scrollfont.dropShadow(true);
@@ -337,5 +341,10 @@ void ConfHUD::draw() {
     if(scroll_message_x < (-scroll_message_width - 100)) scroll_message_x = display.width;
 
     scrollfont.draw(scroll_message_x, display.height - 120.0, scroll_message);
+
+    if(debug) {
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        font.print(10, 10, "FPS %.2f", fps);
+    }
 }
 
