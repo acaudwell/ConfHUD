@@ -36,6 +36,20 @@ int main(int argc, char *argv[]) {
             confhud_help("");
         }
 
+        if(args == "--duration") {
+
+            if((i+1)>=arguments.size()) {
+                confhud_help("specify duration (seconds)");
+            }
+
+            gConfHUDTimetableDuration = atof(arguments[++i].c_str());
+
+            if(gConfHUDTimetableDuration<=0.0) {
+                confhud_help("invalid duration value");
+            }
+            continue;
+        }
+
         // unknown argument
         std::string arg_error = std::string("unknown option ") + std::string(args);
 

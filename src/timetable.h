@@ -39,7 +39,7 @@ public:
 
     TimetableEntry(std::string room, std::string description, time_t start_time);
 
-    void draw(float dt);
+    void draw(float dt, float table_alpha);
 };
 
 class Timetable {
@@ -48,7 +48,12 @@ protected:
 
     time_t last_modified_time;
 
+    std::string title;
+
     int entry_height;
+
+    float alpha;
+    bool fadeout;
 
     FXFont font;
     std::vector<TimetableEntry*> entries;
@@ -61,6 +66,13 @@ public:
     Timetable(std::string timetablefile);
     ~Timetable();
 
+    void fadeIn();
+    void fadeOut();
+
+    float getAlpha();
+
+    bool isVisible();
+
     bool loadTimetable(std::string timetablefile);
 
     int getEntryHeight();
@@ -72,26 +84,5 @@ public:
     void logic(float dt);
     void draw(float dt);
 };
-
-class TimetableViewer {
-protected:
-
-    FXFont font;
-    std::vector<Timetable*> timetables;
-    int current_timetable;
-    bool next_timetable;
-
-public:
-    TimetableViewer();
-    ~TimetableViewer();
-
-    void addTimetable(std::string timetablefile);
-
-    void nextTimetable();
-
-    void logic(float dt);
-    void draw(float dt);
-};
-
 
 #endif

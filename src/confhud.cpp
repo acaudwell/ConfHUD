@@ -118,6 +118,8 @@ void confhud_help(std::string error) {
     printf("  -h, --help                       Help\n\n");
     printf("  -WIDTHxHEIGHT                    Set window size\n");
     printf("  -f                               Fullscreen\n\n");
+    printf("  --duration SECONDS               Time duration each timetable is shown\n\n");
+
 
 #ifdef _WIN32
     printf("Press Enter\n");
@@ -149,6 +151,9 @@ ConfHUD::ConfHUD() {
 
     footer = texturemanager.grab("footer.jpg");
 
+    //make footer repeat horizontally
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
     updateScrollMessage();
 
     reset();
@@ -160,6 +165,7 @@ void ConfHUD::reset() {
     timetable_viewer = new TimetableViewer();
 
     timetable_viewer->addTimetable("data/test/talks.txt");
+    timetable_viewer->addTimetable("data/test/miniconfs.txt");
 }
 
 ConfHUD::~ConfHUD() {
@@ -169,6 +175,8 @@ ConfHUD::~ConfHUD() {
 }
 
 void ConfHUD::updateScrollMessage() {
+    debugLog("Updating scroll message\n");
+    
     //get message
     std::ifstream in("data/test/message.txt");
 
@@ -178,8 +186,6 @@ void ConfHUD::updateScrollMessage() {
         in.close();
 
         scroll_message = std::string(buff);
-
-        debugLog("scroll_message = %s\n", scroll_message.c_str());
     }
 
     scroll_message_width = scrollfont.getWidth(scroll_message);
@@ -221,6 +227,12 @@ void ConfHUD::keyPress(SDL_KeyboardEvent *e) {
 }
 
 void ConfHUD::logic() {
+
+    //update scroll bar
+    scroll_message_x -= dt * 120.0f;
+    if(scroll_message_x < (-scroll_message_width - 100.0)) scroll_message_x = display.width;
+
+    timetable_viewer->logic(dt);
 }
 
 void ConfHUD::drawBackground() {
@@ -291,19 +303,21 @@ void ConfHUD::drawBackground() {
 
     float footer_start_y = display.height - footer->h;
 
+    float footer_w_ratio = ((float) display.width / footer->w) * 0.75;
+
     glBindTexture(GL_TEXTURE_2D, footer->textureid);
 
     glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f);
         glVertex2f(0.0f, footer_start_y);
 
-        glTexCoord2f(1.0f,0.0f);
+        glTexCoord2f(footer_w_ratio, 0.0f);
         glVertex2f(display.width, footer_start_y);
 
-        glTexCoord2f(1.0f,1.0f);
+        glTexCoord2f(footer_w_ratio, 1.0f);
         glVertex2f(display.width, display.height);
 
-        glTexCoord2f(0.0f,1.0f);
+        glTexCoord2f(0.0f, 1.0f);
         glVertex2f(0.0f, display.height);
     glEnd();
 }
@@ -335,10 +349,6 @@ void ConfHUD::draw() {
 
     glColor4f(0.17, 0.47, 0.76, 1.0);
 //    glColor4f(0.66, 0.80, 0.91, 1.0);
-
-    //draw scroll bar
-    scroll_message_x -= dt * 100.0;
-    if(scroll_message_x < (-scroll_message_width - 100)) scroll_message_x = display.width;
 
     scrollfont.draw(scroll_message_x, display.height - 120.0, scroll_message);
 

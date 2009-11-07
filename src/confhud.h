@@ -33,7 +33,7 @@
 #include "core/sdlapp.h"
 #include "core/fxfont.h"
 
-#include "timetable.h"
+#include "viewer.h"
 
 void createWindowsConsole();
 

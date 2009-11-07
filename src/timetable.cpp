@@ -18,7 +18,7 @@
 #include "timetable.h"
 
 // room|timestamp|description
-Regex timetable_entry_regex("^([0-9]+)\\|([^|]*)\\|(.*)$");
+Regex timetable_entry_regex("^([0-9]*)\\|([^|]*)\\|(.*)$");
 
 //TimetableEntry
 
@@ -28,10 +28,12 @@ TimetableEntry::TimetableEntry(std::string room, std::string description, time_t
     this->start_time  = start_time;
 
     //make display time
-    char datestr[256];
-    struct tm* timeinfo = localtime ( &start_time );
-    strftime(datestr, 256, "%H%M", timeinfo);
-    display_time = std::string(datestr);
+    if(start_time != 0) {
+        char datestr[256];
+        struct tm* timeinfo = localtime ( &start_time );
+        strftime(datestr, 256, "%H%M", timeinfo);
+        display_time = std::string(datestr);
+    }
 
     font = fontmanager.grab("FreeSans.ttf", 28);
     font.shadowStrength(0.4);
@@ -39,21 +41,21 @@ TimetableEntry::TimetableEntry(std::string room, std::string description, time_t
     font.roundCoordinates(true);
 }
 
-void TimetableEntry::draw(float dt) {
+void TimetableEntry::draw(float dt, float table_alpha) {
 
     float pos1 = 20;
     float pos2 = display.width * 0.1;
     float pos3 = display.width * 0.25;
 
-    glColor3f(0.17, 0.47, 0.76);
+    glColor4f(0.17, 0.47, 0.76, table_alpha);
 
     font.print(20,   0, "%s", room.c_str());
 
-    glColor3f(0.74, 0.57, 0.12);
+    glColor4f(0.74, 0.57, 0.12, table_alpha);
 
     font.print(pos2, 0, "%s", display_time.c_str());
 
-    glColor3f(0.17, 0.47, 0.76);
+    glColor4f(0.17, 0.47, 0.76, table_alpha);
 
     font.print(pos3, 0, "%s", description.c_str());
 }
@@ -62,10 +64,13 @@ void TimetableEntry::draw(float dt) {
 
 Timetable::Timetable(std::string timetablefile) {
 
-    font = fontmanager.grab("FreeSans.ttf", 28);
+    font = fontmanager.grab("FreeSans.ttf", 32);
     font.shadowStrength(0.4);
-    font.dropShadow(true);
+    font.dropShadow(false);
     font.roundCoordinates(true);
+
+    alpha = 0.0;
+    fadeout = false;
 
     entry_height = 35;
 
@@ -93,15 +98,19 @@ bool Timetable::loadTimetable(std::string timetablefile) {
     if(!in.is_open()) return false;
 
     in.getline(buff, 1024);
-    std::string title = std::string(buff);
+
+    title = std::string(buff);
 
     while(in.getline(buff, 1024)) {
         std::string line = std::string(buff);
         std::vector<std::string> matches;
+
         if(timetable_entry_regex.match(line, &matches)) {
+            debugLog("line %s\n", line.c_str());
             time_t timestamp = atoi(matches[0].c_str());
             addEntry(matches[1], matches[2], timestamp);
         }
+
     }
 
     in.close();
@@ -131,9 +140,6 @@ void Timetable::addEntry(std::string room, std::string description, time_t start
 
     //add booking
     entries.push_back(entry);
-
-    //resort
-    std::sort(entries.begin(), entries.end(), conf_timetable_sort);
 }
 
 int Timetable::getHeight() {
@@ -158,18 +164,46 @@ void Timetable::refresh() {
     if(rc !=0) return;
 
     if(last_modified_time < fileinfo.st_mtime) {
+        debugLog("Timetable %s appears to have been modified. Reloading.\n", timetablefile.c_str());
         loadTimetable(timetablefile);
     }
 }
 
+void Timetable::fadeOut() {
+    fadeout=true;
+}
+void Timetable::fadeIn() {
+    fadeout=false;
+}
+
+float Timetable::getAlpha() {
+    return alpha;
+}
+
+bool Timetable::isVisible() {
+    return alpha > 0.0;
+}
+
 void Timetable::logic(float dt) {
 
+    if(fadeout) {
+        if(alpha>0.0) alpha = std::max(0.0f, alpha - dt);
+    } else {
+        if(alpha<1.0) alpha = std::min(1.0f, alpha + dt);
+    }
 }
 
 void Timetable::draw(float dt) {
 
 
     glEnable(GL_TEXTURE_2D);
+
+    glColor4f(1.0, 1.0, 1.0, std::min(1.0f, alpha * 2.0f));
+
+    float title_pos = display.width * 0.25;
+
+    //draw title
+    font.draw(title_pos, -10.0, title);
 
     glPushMatrix();
 
@@ -178,95 +212,10 @@ void Timetable::draw(float dt) {
         //draw bookings
         for(std::vector<TimetableEntry*>::iterator it = entries.begin(); it != entries.end(); it++) {
             TimetableEntry* entry = *it;
-            entry->draw(dt);
+            entry->draw(dt, alpha);
             glTranslatef(0.0, entry_height, 0.0);
         }
 
     glPopMatrix();
 }
 
-// TimetableViewer
-
-TimetableViewer::TimetableViewer() {
-    next_timetable = false;
-    current_timetable = 0;
-
-    font = fontmanager.grab("FreeSans.ttf", 28);
-    font.shadowStrength(0.4);
-    font.dropShadow(true);
-    font.roundCoordinates(true);
-}
-
-TimetableViewer::~TimetableViewer() {
-    for(std::vector<Timetable*>::iterator it = timetables.begin(); it != timetables.end(); it++) {
-        Timetable* timetable = *it;
-        delete timetable;
-    }
-    timetables.clear();
-}
-
-void TimetableViewer::nextTimetable() {
-    if(timetables.size()==0) return;
-    next_timetable = true;
-}
-
-void TimetableViewer::addTimetable(std::string timetablefile) {
-    Timetable* timetable = new Timetable(timetablefile);
-    timetables.push_back(timetable);
-}
-
-void TimetableViewer::logic(float dt) {
-
-    if(timetables.size() == 0) return;
-
-    Timetable* current = timetables[current_timetable];
-
-    current->logic(dt);
-}
-
-void TimetableViewer::draw(float dt) {
-     if(timetables.size() == 0) return;
-
-    Timetable* current = timetables[current_timetable];
-
-    if(current->getEntryCount()==0) return;
-
-   //draw transparent background
-    glDisable(GL_TEXTURE_2D);
-
-    float entry_height = current->getEntryHeight();
-    float timetable_height = current->getHeight() + 10.0;
-    vec2f timetable_corner = vec2f(0.0, 130.0);
-
-    glBegin(GL_QUADS);
-        glColor4f(1.0, 1.0, 1.0, 0.4);
-
-        glVertex2f(timetable_corner.x, timetable_corner.y);
-        glVertex2f(display.width,      timetable_corner.y);
-
-        glVertex2f(display.width,      timetable_corner.y + timetable_height);
-        glVertex2f(timetable_corner.x, timetable_corner.y + timetable_height);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
-
-    glPushMatrix();
-
-        glTranslatef(timetable_corner.x, timetable_corner.y - entry_height, 0.0);
-
-        float pos1 = 20;
-        float pos2 = display.width * 0.1;
-        float pos3 = display.width * 0.25;
-
-        glColor3f(1.0, 1.0, 1.0);
-
-        font.draw(pos1, 0.0, "Room");
-        font.draw(pos2, 0.0, "Time");
-        font.draw(pos3, 0.0, "Description");
-
-        glTranslatef(0.0, 10.0, 0.0);
-
-        current->draw(dt);
-
-    glPopMatrix();
-}
