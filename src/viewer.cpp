@@ -17,7 +17,7 @@
 
 #include "viewer.h"
 
-float gConfHUDTimetableDuration = 30.0;
+float gConfHUDTimetableDuration = 15.0;
 
 // TimetableViewer
 
@@ -54,7 +54,9 @@ void TimetableViewer::nextTimetable() {
 
 void TimetableViewer::addTimetable(std::string timetablefile) {
     Timetable* timetable = new Timetable(timetablefile);
-    timetables.push_back(timetable);
+
+    if(timetable->getEntryCount() > 0) timetables.push_back(timetable);
+    else delete timetable;
 }
 
 void TimetableViewer::logic(float dt) {
