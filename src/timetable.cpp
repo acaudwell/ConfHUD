@@ -18,7 +18,7 @@
 #include "timetable.h"
 
 // room|timestamp|description
-Regex timetable_entry_regex("^([0-9]*)\\|([^|]*)\\|(.*)$");
+Regex timetable_entry_regex("^([0-9]{0,10})\\|([^|]*)\\|(.*)$");
 
 //TimetableEntry
 
@@ -194,7 +194,6 @@ void Timetable::logic(float dt) {
 }
 
 void Timetable::draw(float dt) {
-
 
     glEnable(GL_TEXTURE_2D);
 
