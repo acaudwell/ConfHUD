@@ -63,7 +63,7 @@ protected:
     void deleteEntries();
     void addEntry(std::string room, std::string description, time_t start_time);
 public:
-    Timetable(std::string timetablefile);
+    Timetable(std::string title, std::string timetablefile);
     ~Timetable();
 
     void fadeIn();

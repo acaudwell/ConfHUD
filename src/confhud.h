@@ -32,6 +32,7 @@
 #include "core/display.h"
 #include "core/sdlapp.h"
 #include "core/fxfont.h"
+#include "core/conffile.h"
 
 #include "viewer.h"
 
@@ -59,10 +60,16 @@ protected:
 
     void updateScrollMessage();
 
+    ConfFile* conf;
+
+    std::string message_file;
+
     void reset();
+    void readConfig();
+
     void drawBackground();
 public:
-    ConfHUD();
+    ConfHUD(ConfFile* conf);
     ~ConfHUD();
 
     void update(float t, float dt);

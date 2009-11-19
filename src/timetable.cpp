@@ -62,12 +62,14 @@ void TimetableEntry::draw(float dt, float table_alpha) {
 
 //Timetable
 
-Timetable::Timetable(std::string timetablefile) {
+Timetable::Timetable(std::string title, std::string timetablefile) {
 
     font = fontmanager.grab("FreeSans.ttf", 32);
     font.shadowStrength(0.4);
     font.dropShadow(false);
     font.roundCoordinates(true);
+
+    this->title = title;
 
     alpha = 0.0;
     fadeout = false;
@@ -97,10 +99,6 @@ bool Timetable::loadTimetable(std::string timetablefile) {
     std::ifstream in(timetablefile.c_str());
     if(!in.is_open()) return false;
 
-    in.getline(buff, 1024);
-
-    title = std::string(buff);
-
     while(in.getline(buff, 1024)) {
         std::string line = std::string(buff);
         std::vector<std::string> matches;
@@ -110,7 +108,6 @@ bool Timetable::loadTimetable(std::string timetablefile) {
             time_t timestamp = atoi(matches[0].c_str());
             addEntry(matches[1], matches[2], timestamp);
         }
-
     }
 
     in.close();

@@ -134,7 +134,9 @@ void confhud_help(std::string error) {
     }
 }
 
-ConfHUD::ConfHUD() {
+ConfHUD::ConfHUD(ConfFile* conf) {
+
+    this->conf = conf;
 
     debug = false;
 
@@ -157,15 +159,40 @@ ConfHUD::ConfHUD() {
     updateScrollMessage();
 
     reset();
+    readConfig();
 }
 
 
 void ConfHUD::reset() {
     if(timetable_viewer !=0) delete timetable_viewer;
     timetable_viewer = new TimetableViewer();
+}
 
-    timetable_viewer->addTimetable("data/test/talks.txt");
-    timetable_viewer->addTimetable("data/test/miniconfs.txt");
+void ConfHUD::readConfig() {
+    if(!conf->load()) return;
+
+    if(conf->hasSection("settings")) {
+        message_file = conf->getString("settings", "message_file");
+    }
+
+    int timetable_no = 1;
+    while(1) {
+        char title_buff[1024];
+        sprintf(title_buff, "timetable_%d", timetable_no++);
+
+        std::string section = std::string(title_buff);
+
+        if(!conf->hasSection(section)) break;
+
+        //check it has required values
+        if(!conf->hasValue(section, "title")) continue;
+        if(!conf->hasValue(section, "file")) continue;
+
+        std::string title = conf->getString(section, "title");
+        std::string file  = conf->getString(section, "file");
+
+        timetable_viewer->addTimetable(title, file);
+    }
 }
 
 ConfHUD::~ConfHUD() {
@@ -177,8 +204,10 @@ ConfHUD::~ConfHUD() {
 void ConfHUD::updateScrollMessage() {
     debugLog("Updating scroll message\n");
     
+    if(message_file.size()==0) return;
+
     //get message
-    std::ifstream in("data/test/message.txt");
+    std::ifstream in(message_file.c_str());
 
     if(in.is_open()) {
         char buff[4096];

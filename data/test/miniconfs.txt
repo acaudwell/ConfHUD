@@ -1,4 +1,3 @@
-Miniconfs
 1216610240|RM331|Business of Open Source
 1224610240|RM202|Arduino
 1256656770|RM342|Multimedia

@@ -34,7 +34,7 @@ public:
     TimetableViewer();
     ~TimetableViewer();
 
-    void addTimetable(std::string timetablefile);
+    void addTimetable(std::string title, std::string timetablefile);
 
     void nextTimetable();
 

@@ -52,8 +52,8 @@ void TimetableViewer::nextTimetable() {
     current->fadeOut();
 }
 
-void TimetableViewer::addTimetable(std::string timetablefile) {
-    Timetable* timetable = new Timetable(timetablefile);
+void TimetableViewer::addTimetable(std::string title, std::string timetablefile) {
+    Timetable* timetable = new Timetable(title, timetablefile);
 
     if(timetable->getEntryCount() > 0) timetables.push_back(timetable);
     else delete timetable;
