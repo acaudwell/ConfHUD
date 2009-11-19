@@ -64,7 +64,7 @@ bool ConfFile::load() {
         std::vector<std::string> matches;
 
         // blank line or commented out lines
-        if(line.size() == 0 || line.size() > 1 && line[0] == '#') {
+        if(line.size() == 0 || line.size() > 0 && line[0] == '#') {
 
             continue;
 
