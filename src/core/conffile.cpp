@@ -160,5 +160,5 @@ bool ConfFile::getBool(std::string section, std::string key) {
     if(stringvalue == "1" || stringvalue == "yes" || stringvalue == "YES" || stringvalue == "Yes")
         return true;
 
-    return false; 
+    return false;
 }
