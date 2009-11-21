@@ -104,7 +104,7 @@ bool Timetable::loadTimetable(std::string timetablefile) {
         std::vector<std::string> matches;
 
         if(timetable_entry_regex.match(line, &matches)) {
-            debugLog("line %s\n", line.c_str());
+//            debugLog("line %s\n", line.c_str());
             time_t timestamp = atoi(matches[0].c_str());
             addEntry(matches[1], matches[2], timestamp);
         }
