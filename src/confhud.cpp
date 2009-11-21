@@ -156,10 +156,10 @@ ConfHUD::ConfHUD(ConfFile* conf) {
     //make footer repeat horizontally
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-    updateScrollMessage();
-
     reset();
     readConfig();
+
+    updateScrollMessage();
 }
 
 
@@ -202,9 +202,10 @@ ConfHUD::~ConfHUD() {
 }
 
 void ConfHUD::updateScrollMessage() {
-    debugLog("Updating scroll message\n");
-    
+
     if(message_file.size()==0) return;
+
+    debugLog("Updating scroll message\n");
 
     //get message
     std::ifstream in(message_file.c_str());
