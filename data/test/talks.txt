@@ -1,8 +1,0 @@
-1216610240|RM201|Arduino Tutorial
-1253610240|RM202|Business of Open Source
-1256410240|BR301|Data Storage and Retrieval
-1256650240|BR322|Distro Summit
-||
-||Lunch
-||
-1256760240|BR301|Wave Developers
