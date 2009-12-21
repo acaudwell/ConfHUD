@@ -1,3 +1,6 @@
+var/
+confhud.conf
+playlist.conf
 autom4te.cache
 confhud
 debug.log

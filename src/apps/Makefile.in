@@ -1,0 +1,25 @@
+LIBS = @LIBS@
+
+CPPFLAGS = @CPPFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+CXX = g++
+
+SUBDIRS = coast gource
+objects = lcaapp.o gapp.o
+
+all: makeapps $(objects)
+
+makeapps:
+	for dir in ${SUBDIRS} ; do ( cd $$dir ; ${MAKE} all ); done
+
+distclean:
+	for dir in ${SUBDIRS} ; do ( cd $$dir ; ${MAKE} distclean ); done
+	rm Makefile
+
+clean:
+	for dir in ${SUBDIRS} ; do ( cd $$dir ; ${MAKE} clean ); done
+	rm *.o
+
+%.o:%.cpp
+	$(CXX) -I.. $(CXXFLAGS) $(CPPFLAGS) -c $+

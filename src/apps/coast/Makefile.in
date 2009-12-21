@@ -1,0 +1,20 @@
+LIBS = @LIBS@
+
+CPPFLAGS = @CPPFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+CXX = g++
+
+objects = coast.o
+
+all: $(objects)
+
+distclean:
+	rm Makefile
+
+clean:
+	rm -f *.o
+
+%.o:%.cpp
+	$(CXX) -I../.. $(CXXFLAGS) $(CPPFLAGS) -c $+
+

@@ -3,10 +3,10 @@ LIBS = @LIBS@
 CPPFLAGS = @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 
-SUBDIRS = core
+SUBDIRS = core apps
 CXX = g++
 CC = gcc
-objects = confhud.o viewer.o timetable.o main.o
+objects = confhud.o viewer.o timetable.o confapp.o main.o
 
 all:	
 	for dir in ${SUBDIRS} ; do ( cd $$dir ; ${MAKE} all ); done
@@ -21,18 +21,10 @@ clean:
 	rm -f *.o *.d
 
 confhud: $(objects) 
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ core/*.o $+ $(LIBS)
+	$(CXX) -I. $(CXXFLAGS) $(CPPFLAGS) -o $@ apps/*.o apps/*/*.o core/*.o $+ $(LIBS)
 	mv $@ ..
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ -c $<
+	$(CXX) -I. $(CXXFLAGS) $(CPPFLAGS) -o $@ -c $<
 
-ifndef NODEPS
-ifeq ($(findstring clean,$(MAKECMDGOALS)),)
-dfiles = $(patsubst %.o,%.d,$(objects))
-%.d: %.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@ -MT $(patsubst %.cpp,%.o,$<) -MM $(CPPFLAGS)
--include $(dfiles)
-endif
-endif # NODEPS
 

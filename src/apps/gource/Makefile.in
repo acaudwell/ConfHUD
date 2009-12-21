@@ -1,0 +1,19 @@
+LIBS = @LIBS@
+
+CPPFLAGS = @CPPFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+CXX = g++
+
+objects = gource.o pawn.o action.o user.o file.o spline.o dirnode.o slider.o zoomcamera.o commitlog.o custom.o git.o gitraw.o apache.o hg.o ppm.o cvs-exp.o
+
+all: $(objects)
+
+distclean:
+	rm Makefile
+
+clean:
+	rm -f *.o
+
+%.o:%.cpp
+	$(CXX) -I../.. $(CXXFLAGS) $(CPPFLAGS) -c $+

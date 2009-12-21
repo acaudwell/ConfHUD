@@ -26,13 +26,17 @@
 
 #include <fstream>
 
-#include <deque>
+#include <list>
 #include <dirent.h>
 
 #include "core/display.h"
 #include "core/sdlapp.h"
 #include "core/fxfont.h"
 #include "core/conffile.h"
+
+#include "confapp.h"
+#include "apps/gapp.h"
+#include "apps/lcaapp.h"
 
 #include "viewer.h"
 
@@ -50,8 +54,6 @@ protected:
 
     TimetableViewer* timetable_viewer;
 
-    TextureResource* footer;
-
     FXFont font, scrollfont;
 
     std::string scroll_message;
@@ -67,7 +69,23 @@ protected:
     void reset();
     void readConfig();
 
-    void drawBackground();
+    bool nextApp;
+
+    ConfApp* confapp;
+
+    std::string playlist_file;
+    std::vector<std::string> playlist;
+    int playlist_index;
+
+    GLuint lastFrame;
+    float transition;
+
+    void readPlaylist();
+    ConfApp* getNextApp();
+
+    void updateColours(float dt);
+    void updateConfApp(float dt);
+    void drawConfApp(float dt);
 public:
     ConfHUD(ConfFile* conf);
     ~ConfHUD();

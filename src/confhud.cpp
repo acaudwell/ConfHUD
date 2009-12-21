@@ -17,6 +17,7 @@
 
 #include "confhud.h"
 
+Regex playlist_line("^([^\\|]+)\\|(.+)$");
 
 #ifdef _WIN32
 HWND consoleWindow = 0;
@@ -141,6 +142,7 @@ ConfHUD::ConfHUD(ConfFile* conf) {
     debug = false;
 
     timetable_viewer = 0;
+    confapp = 0;
 
     font = fontmanager.grab("FreeSans.ttf", 16);
     font.dropShadow(true);
@@ -151,10 +153,11 @@ ConfHUD::ConfHUD(ConfFile* conf) {
     scrollfont.dropShadow(true);
     scrollfont.roundCoordinates(true);
 
-    footer = texturemanager.grab("footer.jpg");
+    lastFrame = display.emptyTexture(display.width, display.height);
 
-    //make footer repeat horizontally
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    playlist_index = -1;
+
+    transition = 0.0;
 
     reset();
     readConfig();
@@ -173,6 +176,7 @@ void ConfHUD::readConfig() {
 
     if(conf->hasSection("settings")) {
         message_file = conf->getString("settings", "message_file");
+        playlist_file = conf->getString("settings", "playlist_file");
     }
 
     int timetable_no = 1;
@@ -199,6 +203,8 @@ ConfHUD::~ConfHUD() {
     reset();
 
     if(timetable_viewer != 0) delete timetable_viewer;
+
+    if(lastFrame != 0) glDeleteTextures(1, &lastFrame);
 }
 
 void ConfHUD::updateScrollMessage() {
@@ -253,6 +259,137 @@ void ConfHUD::keyPress(SDL_KeyboardEvent *e) {
         if (e->keysym.sym == SDLK_q) {
             debug = !debug;
         }
+
+        if (e->keysym.sym == SDLK_n) {
+            nextApp = true;
+        }
+
+    }
+}
+
+void ConfHUD::updateColours(float dt) {
+
+    if(confapp == 0) return;
+
+    float amount = std::min(1.0f, dt*2.0f);
+
+    gConfHUDColourDescription += (confapp->getColourDescription() - gConfHUDColourDescription) * amount;
+    gConfHUDColourTitle       += (confapp->getColourTitle() - gConfHUDColourTitle) * amount;
+    gConfHUDColourTime        += (confapp->getColourTime() - gConfHUDColourTime) * amount;
+    gConfHUDColourMessage     += (confapp->getColourMessage() - gConfHUDColourMessage) * amount;
+    gConfHUDColourVisor       += (confapp->getColourVisor() - gConfHUDColourVisor) * amount;
+}
+
+void ConfHUD::readPlaylist() {
+    if(playlist_file.size()==0) return;
+
+    std::ifstream in(playlist_file.c_str());
+
+    if(!in.is_open()) {
+        debugLog("failed to open playlist file '%s'\n", playlist_file.c_str());
+        return;
+    }
+
+    playlist.clear();
+
+    char buff[1024];
+
+    while(in.getline(buff, 1024)) {
+
+        std::string line = std::string(buff);
+
+        if(line.size()==0 || line[0] == '#') continue;
+        if(!playlist_line.match(line)) continue;
+
+        playlist.push_back(line);
+    }
+}
+
+ConfApp* ConfHUD::getNextApp() {
+    if(confapp != 0) {
+        delete confapp;
+        confapp = 0;
+    }
+
+    readPlaylist();
+
+    playlist_index = (playlist_index + 1) % playlist.size();
+
+    std::vector<std::string> listentry;
+
+    if(playlist_line.match(playlist[playlist_index], &listentry)) {
+        std::string appname = listentry[0];
+        std::string appconf = listentry[1];
+
+        ConfApp* app = 0;
+
+        if(appname == "lca") {
+            app = new LCAApp(appconf);
+        } else if(appname == "gource") {
+            app = new GourceApp(appconf);
+        }
+
+        if(app != 0) {
+            app->prepare();
+            app->init();
+        }
+
+        transition = 1.0;
+
+        return app;
+    }
+
+    return 0;
+}
+
+void ConfHUD::updateConfApp(float dt) {
+
+    // TODO: check prepare succeeded, etc
+
+    if(confapp == 0 || nextApp || confapp->isFinished() || confapp->prepareFailed()) {
+        nextApp = false;
+
+        confapp = getNextApp();
+
+        if(confapp==0) return;
+    }
+
+    confapp->logic(dt);
+}
+
+void ConfHUD::drawConfApp(float dt) {
+    if(confapp==0) return;
+
+    confapp->draw();
+
+    if(lastFrame && transition > 0.0) {
+        display.mode2D();
+
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+
+        glBindTexture(GL_TEXTURE_2D, lastFrame);
+
+        glColor4f(1.0, 1.0, 1.0, std::max(0.0f, transition));
+
+        glBegin(GL_QUADS);
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex2f(0.0f, 0.0);
+
+            glTexCoord2f(1.0, 1.0f);
+            glVertex2f(display.width, 0.0);
+
+            glTexCoord2f(1.0, 0.0f);
+            glVertex2f(display.width, display.height);
+
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex2f(0.0f, display.height);
+        glEnd();
+
+        transition -= dt;
+    } else {
+        display.renderToTexture(lastFrame, display.width, display.height, GL_RGBA);
     }
 }
 
@@ -263,93 +400,10 @@ void ConfHUD::logic() {
     if(scroll_message_x < (-scroll_message_width - 100.0)) scroll_message_x = display.width;
 
     timetable_viewer->logic(dt);
-}
 
-void ConfHUD::drawBackground() {
+    updateConfApp(dt);
 
-    glDisable(GL_TEXTURE_2D);
-
-    float bar1 = display.height * 0.15;
-    float bar2 = display.height * 0.30;
-    float bar3 = display.height * 0.50;
-    float bar4 = display.height * 0.75;
-
-    glBegin(GL_QUADS);
-        glColor3f(0.17, 0.47, 0.76);
-
-        //quad1
-
-        glVertex2f(0.0f, 0.0f);
-        glVertex2f(display.width, 0.0f);
-
-        glColor3f(0.66, 0.80, 0.91);
-
-        glVertex2f(display.width, bar1);
-        glVertex2f(0.0f,          bar1);
-
-        //quad2
-
-        glVertex2f(0.0f,          bar1);
-        glVertex2f(display.width, bar1);
-
-        glColor3f(0.93, 0.96, 0.98);
-
-        glVertex2f(display.width, bar2);
-        glVertex2f(0.0f,          bar2);
-
-        //quad3
-
-        glVertex2f(0.0f,          bar2);
-        glVertex2f(display.width, bar2);
-
-        glColor3f(0.85, 0.92, 0.95);
-
-        glVertex2f(display.width, bar3);
-        glVertex2f(0.0f,          bar3);
-
-        //quad4
-
-        glVertex2f(0.0f,          bar3);
-        glVertex2f(display.width, bar3);
-
-        glColor3f(0.97, 0.98, 0.99);
-
-        glVertex2f(display.width, bar4);
-        glVertex2f(0.0f,          bar4);
-
-        //quad5
-
-        glVertex2f(0.0f,          bar4);
-        glVertex2f(display.width, bar4);
-
-        glColor3f(1.0, 1.0, 1.0);
-
-        glVertex2f(display.width, display.height);
-        glVertex2f(0.0f,          display.height);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
-
-
-    float footer_start_y = display.height - footer->h;
-
-    float footer_w_ratio = ((float) display.width / footer->w) * 0.75;
-
-    glBindTexture(GL_TEXTURE_2D, footer->textureid);
-
-    glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2f(0.0f, footer_start_y);
-
-        glTexCoord2f(footer_w_ratio, 0.0f);
-        glVertex2f(display.width, footer_start_y);
-
-        glTexCoord2f(footer_w_ratio, 1.0f);
-        glVertex2f(display.width, display.height);
-
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex2f(0.0f, display.height);
-    glEnd();
+    updateColours(dt);
 }
 
 void ConfHUD::draw() {
@@ -363,7 +417,7 @@ void ConfHUD::draw() {
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
 
-    drawBackground();
+    drawConfApp(dt);
 
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -377,8 +431,7 @@ void ConfHUD::draw() {
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
-    glColor4f(0.17, 0.47, 0.76, 1.0);
-//    glColor4f(0.66, 0.80, 0.91, 1.0);
+    glColor4f(gConfHUDColourMessage.x, gConfHUDColourMessage.y, gConfHUDColourMessage.z, 1.0);
 
     scrollfont.draw(scroll_message_x, display.height - 120.0, scroll_message);
 

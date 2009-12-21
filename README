@@ -1,12 +1,9 @@
 
-                             ConfHUD
-
-                   Conference Head Up Display
+                   LCA 2010 Conference Display
 
                 Copyright (C) 2009 Andrew Caudwell
 
                 http://github.com/acaudwell/ConfHUD
-
 
 Building
 ========
@@ -24,3 +21,4 @@ Building on Linux:
 
     ./configure
     make
+
