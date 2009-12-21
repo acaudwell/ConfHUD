@@ -4,7 +4,11 @@
 Regex ConfFile_section("^\\s*\\[([^\\]]+)\\]\\s*$");
 
 // parse key value pair, seperated by an equals sign, removing white space on key and front of the value
-Regex ConfFile_key_value("^\\s*([^=\\s]+)\\s*=\\s*([^\\s].+)?$");
+Regex ConfFile_key_value("^\\s*([^=\\s]+)\\s*=\\s*([^\\s].*)?$");
+
+// vec3f, or vec4f with liberal allowance for whitespace
+Regex ConfFile_vec3_value("^\\s*vec3\\(\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*\\)\\s*$");
+Regex ConfFile_vec4_value("^\\s*vec4\\(\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*\\)\\s*$");
 
 ConfFile::ConfFile() {
 
@@ -161,4 +165,32 @@ bool ConfFile::getBool(std::string section, std::string key) {
         return true;
 
     return false;
+}
+
+vec3f ConfFile::getVec3(std::string section, std::string key) {
+    std::string stringvalue = getString(section, key);
+
+    std::vector<std::string> matches;
+
+    if(ConfFile_vec3_value.match(stringvalue, &matches)) {
+        return vec3f(atof(matches[0].c_str()), atof(matches[1].c_str()), atof(matches[2].c_str()));
+    }
+
+    debugLog("'%s' did not match vec3 regex\n", stringvalue.c_str());
+
+    return vec3f(0.0, 0.0, 0.0);
+}
+
+vec4f ConfFile::getVec4(std::string section, std::string key) {
+    std::string stringvalue = getString(section, key);
+
+    std::vector<std::string> matches;
+
+    if(ConfFile_vec4_value.match(stringvalue, &matches)) {
+        return vec4f(atof(matches[0].c_str()), atof(matches[1].c_str()), atof(matches[2].c_str()), atof(matches[3].c_str()) );
+    }
+
+    debugLog("'%s' did not match vec4 regex\n", stringvalue.c_str());
+
+    return vec4f(1.0, 1.0, 1.0, 1.0);
 }

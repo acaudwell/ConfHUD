@@ -30,6 +30,9 @@ public:
     int         getInt(std::string section, std::string key);
     float       getFloat(std::string section, std::string key);
     bool        getBool(std::string section, std::string key);
+    vec3f       getVec3(std::string, std::string key);
+    vec4f       getVec4(std::string, std::string key);
+
 
     std::string getError();
 };
