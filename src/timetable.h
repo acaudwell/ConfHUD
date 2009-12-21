@@ -85,4 +85,10 @@ public:
     void draw(float dt);
 };
 
+extern vec3f gConfHUDColourDescription;
+extern vec3f gConfHUDColourTitle;
+extern vec3f gConfHUDColourTime;
+extern vec3f gConfHUDColourMessage;
+extern vec4f gConfHUDColourVisor;
+
 #endif

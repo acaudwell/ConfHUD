@@ -102,7 +102,7 @@ void TimetableViewer::draw(float dt) {
     float table_alpha = current->getAlpha();
 
     glBegin(GL_QUADS);
-        glColor4f(1.0, 1.0, 1.0, 0.4f * table_alpha);
+        glColor4f(gConfHUDColourVisor.x, gConfHUDColourVisor.y, gConfHUDColourVisor.z, gConfHUDColourVisor.w * table_alpha);
 
         glVertex2f(timetable_corner.x, timetable_corner.y);
         glVertex2f(display.width,      timetable_corner.y);
@@ -120,7 +120,7 @@ void TimetableViewer::draw(float dt) {
         float pos1 = 20;
         float pos2 = display.width * 0.1;
 
-        glColor3f(1.0, 1.0, 1.0);
+        glColor3fv(gConfHUDColourTitle);
 
         font.draw(pos1, 0.0, "Room");
         font.draw(pos2, 0.0, "Time");

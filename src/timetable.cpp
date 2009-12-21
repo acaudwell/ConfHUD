@@ -20,6 +20,12 @@
 // room|timestamp|description
 Regex timetable_entry_regex("^([0-9]{0,10})\\|([^|]*)\\|(.*)$");
 
+vec3f gConfHUDColourDescription(1.0, 1.0, 1.0);
+vec3f gConfHUDColourTitle(1.0, 1.0, 1.0);
+vec3f gConfHUDColourTime(1.0, 1.0, 1.0);
+vec3f gConfHUDColourMessage(1.0, 1.0, 1.0);
+vec4f gConfHUDColourVisor(1.0, 1.0, 1.0, 0.0);
+
 //TimetableEntry
 
 TimetableEntry::TimetableEntry(std::string room, std::string description, time_t start_time) {
@@ -47,15 +53,15 @@ void TimetableEntry::draw(float dt, float table_alpha) {
     float pos2 = display.width * 0.1;
     float pos3 = display.width * 0.25;
 
-    glColor4f(0.17, 0.47, 0.76, table_alpha);
+    glColor4f(gConfHUDColourDescription.x, gConfHUDColourDescription.y, gConfHUDColourDescription.z, table_alpha);
 
     font.print(20,   0, "%s", room.c_str());
 
-    glColor4f(0.74, 0.57, 0.12, table_alpha);
+    glColor4f(gConfHUDColourTime.x, gConfHUDColourTime.y, gConfHUDColourTime.z, table_alpha);
 
     font.print(pos2, 0, "%s", display_time.c_str());
 
-    glColor4f(0.17, 0.47, 0.76, table_alpha);
+    glColor4f(gConfHUDColourDescription.x, gConfHUDColourDescription.y, gConfHUDColourDescription.z, table_alpha);
 
     font.print(pos3, 0, "%s", description.c_str());
 }
@@ -194,7 +200,7 @@ void Timetable::draw(float dt) {
 
     glEnable(GL_TEXTURE_2D);
 
-    glColor4f(1.0, 1.0, 1.0, std::min(1.0f, alpha * 2.0f));
+    glColor4f(gConfHUDColourTitle.x, gConfHUDColourTitle.y, gConfHUDColourTitle.z, std::min(1.0f, alpha * 2.0f));
 
     float title_pos = display.width * 0.25;
 
