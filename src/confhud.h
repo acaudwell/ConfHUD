@@ -37,6 +37,7 @@
 #include "confapp.h"
 #include "apps/gapp.h"
 #include "apps/lcaapp.h"
+#include "apps/slideapp.h"
 
 #include "viewer.h"
 

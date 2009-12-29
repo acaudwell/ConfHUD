@@ -2,7 +2,7 @@
 #define LCA_CONFAPP_H
 
 #include "confapp.h"
-#include "coast/coast.h"
+#include "lca/lca.h"
 
 class LCAApp : public ConfApp {
 public:

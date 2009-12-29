@@ -4,7 +4,7 @@ LCAApp::LCAApp(std::string conffile) : ConfApp(conffile) {
 }
 
 void LCAApp::init() {
-    app = new LCACoast();
+    app = new LCABackground();
     app->init();
 
     ready=true;

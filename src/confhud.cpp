@@ -20,10 +20,10 @@
 Regex playlist_line("^([^\\|]+)\\|(.+)$");
 
 #ifdef _WIN32
-HWND consoleWindow = 0;
+HWND confHUDconsoleWindow = 0;
 
-void createWindowsConsole() {
-    if(consoleWindow !=0) return;
+void ConfHUDWindowsConsole() {
+    if(confHUDconsoleWindow !=0) return;
 
     //create a console on Windows so users can see messages
 
@@ -44,16 +44,16 @@ void createWindowsConsole() {
     freopen("conout$","w", stdout);
     freopen("conout$","w", stderr);
 
-    consoleWindow = 0;
+    confHUDconsoleWindow = 0;
 
     //wait for our console window
-    while(consoleWindow==0) {
-        consoleWindow = FindWindow(0, consoleTitle);
+    while(confHUDconsoleWindow==0) {
+        confHUDconsoleWindow = FindWindow(0, consoleTitle);
         SDL_Delay(100);
     }
 
     //disable the close button so the user cant crash it
-    HMENU hm = GetSystemMenu(consoleWindow, false);
+    HMENU hm = GetSystemMenu(confHUDconsoleWindow, false);
     DeleteMenu(hm, SC_CLOSE, MF_BYCOMMAND);
 }
 #endif
@@ -61,7 +61,7 @@ void createWindowsConsole() {
 //info message
 void confhud_info(std::string msg) {
 #ifdef _WIN32
-    createWindowsConsole();
+    ConfHUDWindowsConsole();
 #endif
 
     printf("%s\n", msg.c_str());
@@ -79,7 +79,7 @@ void confhud_quit(std::string error) {
     SDL_Quit();
 
 #ifdef _WIN32
-    createWindowsConsole();
+    ConfHUDWindowsConsole();
 #endif
 
     printf("Error: %s\n\n", error.c_str());
@@ -96,14 +96,14 @@ void confhud_quit(std::string error) {
 void confhud_help(std::string error) {
 
 #ifdef _WIN32
-    createWindowsConsole();
+    ConfHUDWindowsConsole();
 
     //resize window to fit help message
-    if(consoleWindow !=0) {
+    if(confHUDconsoleWindow !=0) {
         RECT windowRect;
-        if(GetWindowRect(consoleWindow, &windowRect)) {
+        if(GetWindowRect(confHUDconsoleWindow, &windowRect)) {
             float width = windowRect.right - windowRect.left;
-            MoveWindow(consoleWindow,windowRect.left,windowRect.top,width,850,true);
+            MoveWindow(confHUDconsoleWindow,windowRect.left,windowRect.top,width,400,true);
         }
     }
 #endif
@@ -325,6 +325,8 @@ ConfApp* ConfHUD::getNextApp() {
 
         if(appname == "lca") {
             app = new LCAApp(appconf);
+        } else if(appname == "slideshow") {
+            app = new SlideShowApp(appconf);
         } else if(appname == "gource") {
             app = new GourceApp(appconf);
         }

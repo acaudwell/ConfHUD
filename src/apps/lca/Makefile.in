@@ -5,7 +5,7 @@ CXXFLAGS = @CXXFLAGS@
 
 CXX = g++
 
-objects = coast.o
+objects = lca.o slideshow.o
 
 all: $(objects)
 

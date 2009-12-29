@@ -1,5 +1,6 @@
+.objs
 var/
-confhud.conf
+confhud.c*
 playlist.conf
 autom4te.cache
 confhud

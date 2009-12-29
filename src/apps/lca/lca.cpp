@@ -1,6 +1,6 @@
-#include "coast.h"
+#include "lca.h"
 
-LCACoast::LCACoast() : SDLApp() {
+LCABackground::LCABackground() : SDLApp() {
     footer = texturemanager.grab("footer.jpg");
 
     //make footer repeat horizontally
@@ -8,10 +8,10 @@ LCACoast::LCACoast() : SDLApp() {
 
 }
 
-LCACoast::~LCACoast() {
+LCABackground::~LCABackground() {
 }
 
-void LCACoast::drawBackground() {
+void LCABackground::drawBackground() {
 
     float footer_start_y = display.height - footer->h;
     float footer_w_ratio = ((float) display.width / footer->w) * 0.75;
@@ -104,6 +104,6 @@ void LCACoast::drawBackground() {
     glEnd();
 }
 
-void LCACoast::draw(float t, float dt) {
+void LCABackground::draw(float t, float dt) {
     drawBackground();
 }
