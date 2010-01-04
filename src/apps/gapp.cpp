@@ -52,6 +52,10 @@ void GourceApp::init() {
         start_position = atof(value.c_str());
     }
 
+    if(config.hasValue("gource", "background")) {
+        background = config.getVec3("gource", "background");
+    }
+
     gGourceDisableProgress = true;
 
     gGourceHideFilenames = hidefilenames;
