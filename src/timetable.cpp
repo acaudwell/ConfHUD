@@ -18,7 +18,10 @@
 #include "timetable.h"
 
 // room|timestamp|description
-Regex timetable_entry_regex("^([0-9]{0,10})\\|([^|]*)\\|(.*)$");
+Regex timetable_entry_regex("^([^|]*)\\|([^|]*)\\|(.*)$");
+Regex timetable_timestamp_regex("^[0-9]{0,10}$");
+
+std::string timetable_timeformat("%H:%M");
 
 vec3f gConfHUDColourDescription(1.0, 1.0, 1.0);
 vec3f gConfHUDColourTitle(1.0, 1.0, 1.0);
@@ -28,17 +31,21 @@ vec4f gConfHUDColourVisor(1.0, 1.0, 1.0, 0.0);
 
 //TimetableEntry
 
-TimetableEntry::TimetableEntry(std::string room, std::string description, time_t start_time) {
+TimetableEntry::TimetableEntry(std::string room, std::string description, std::string display_time) {
     this->room        = room;
     this->description = description;
-    this->start_time  = start_time;
+    this->display_time  = display_time;
 
-    //make display time
-    if(start_time != 0) {
+    //if display time appears to be a timestamp, process it
+    if(timetable_timestamp_regex.match(display_time)) {
         char datestr[256];
-        struct tm* timeinfo = localtime ( &start_time );
-        strftime(datestr, 256, "%H%M", timeinfo);
-        display_time = std::string(datestr);
+        time_t display_timestamp = atof(display_time.c_str());
+
+        struct tm* timeinfo = localtime ( &display_timestamp );
+
+        strftime(datestr, 256, timetable_timeformat.c_str(), timeinfo);
+
+        this->display_time = std::string(datestr);
     }
 
     font = fontmanager.grab("FreeSans.ttf", 28);
@@ -50,8 +57,8 @@ TimetableEntry::TimetableEntry(std::string room, std::string description, time_t
 void TimetableEntry::draw(float dt, float table_alpha) {
 
     float pos1 = 20;
-    float pos2 = display.width * 0.1;
-    float pos3 = display.width * 0.25;
+    float pos2 = display.width * 0.25;
+    float pos3 = display.width * 0.33;
 
     glColor4f(gConfHUDColourDescription.x, gConfHUDColourDescription.y, gConfHUDColourDescription.z, table_alpha);
 
@@ -110,9 +117,7 @@ bool Timetable::loadTimetable(std::string timetablefile) {
         std::vector<std::string> matches;
 
         if(timetable_entry_regex.match(line, &matches)) {
-//            debugLog("line %s\n", line.c_str());
-            time_t timestamp = atoi(matches[0].c_str());
-            addEntry(matches[1], matches[2], timestamp);
+            addEntry(matches[1], matches[2], matches[0]);
         }
     }
 
@@ -133,13 +138,8 @@ void Timetable::deleteEntries() {
     entries.clear();
 }
 
-
-bool conf_timetable_sort(const TimetableEntry* a, const TimetableEntry* b) {
-  return (a->start_time < b->start_time || a->room.compare(b->room) > 1);
-}
-
-void Timetable::addEntry(std::string room, std::string description, time_t start_time) {
-    TimetableEntry* entry = new TimetableEntry(room, description, start_time);
+void Timetable::addEntry(std::string room, std::string description, std::string display_time) {
+    TimetableEntry* entry = new TimetableEntry(room, description, display_time);
 
     //add booking
     entries.push_back(entry);
@@ -202,7 +202,7 @@ void Timetable::draw(float dt) {
 
     glColor4f(gConfHUDColourTitle.x, gConfHUDColourTitle.y, gConfHUDColourTitle.z, std::min(1.0f, alpha * 2.0f));
 
-    float title_pos = display.width * 0.25;
+    float title_pos = display.width * 0.33;
 
     //draw title
     font.draw(title_pos, -10.0, title);
