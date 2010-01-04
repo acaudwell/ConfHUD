@@ -86,6 +86,6 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/apps/Makefile
                  src/apps/gource/Makefile
-                 src/apps/coast/Makefile
+                 src/apps/lca/Makefile
                  src/core/Makefile])
 AC_OUTPUT
