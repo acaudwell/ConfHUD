@@ -52,6 +52,11 @@ TimetableEntry::TimetableEntry(std::string room, std::string description, std::s
     font.shadowStrength(0.4);
     font.dropShadow(true);
     font.roundCoordinates(true);
+
+    font2 = fontmanager.grab("FreeSans.ttf", 20);
+    font2.shadowStrength(0.4);
+    font2.dropShadow(true);
+    font2.roundCoordinates(true);
 }
 
 void TimetableEntry::draw(float dt, float table_alpha) {
@@ -70,7 +75,13 @@ void TimetableEntry::draw(float dt, float table_alpha) {
 
     glColor4f(gConfHUDColourDescription.x, gConfHUDColourDescription.y, gConfHUDColourDescription.z, table_alpha);
 
-    font.print(pos3, 0, "%s", description.c_str());
+    int description_space = display.width - pos3;
+
+    if(font.getWidth(description) < description_space) {
+        font.print(pos3, 0, "%s", description.c_str());
+    } else {
+        font2.print(pos3, 0, "%s", description.c_str());
+    }
 }
 
 //Timetable

@@ -34,7 +34,7 @@ public:
     std::string description;
     std::string display_time;
 
-    FXFont font;
+    FXFont font, font2;
 
     TimetableEntry(std::string room, std::string description, std::string display_time);
 
