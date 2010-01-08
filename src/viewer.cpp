@@ -118,7 +118,7 @@ void TimetableViewer::draw(float dt) {
         glTranslatef(timetable_corner.x, timetable_corner.y - entry_height, 0.0);
 
         float pos1 = 20;
-        float pos2 = display.width * 0.1;
+        float pos2 = display.width * 0.25;
 
         glColor3fv(gConfHUDColourTitle);
 

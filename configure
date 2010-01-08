@@ -8641,6 +8641,78 @@ echo "$as_me: error: JPEG library required. Please see README" >&2;}
 fi
 
 
+#GLEW
+{ echo "$as_me:$LINENO: checking for glewInit in -lGLEW" >&5
+echo $ECHO_N "checking for glewInit in -lGLEW... $ECHO_C" >&6; }
+if test "${ac_cv_lib_GLEW_glewInit+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lGLEW  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char glewInit ();
+int
+main ()
+{
+return glewInit ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_lib_GLEW_glewInit=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_GLEW_glewInit=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_lib_GLEW_glewInit" >&5
+echo "${ECHO_T}$ac_cv_lib_GLEW_glewInit" >&6; }
+if test $ac_cv_lib_GLEW_glewInit = yes; then
+  LIBS="$LIBS -lGLEW"
+else
+  { { echo "$as_me:$LINENO: error: GLEW required. Please see README" >&5
+echo "$as_me: error: GLEW required. Please see README" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+CPPFLAGS="$CPPFLAGS -DSDLAPP_SHADER_SUPPORT=1"
+
 #SDL_image library with PNG support
 
 { echo "$as_me:$LINENO: checking for IMG_LoadPNG_RW in -lSDL_image" >&5
@@ -9363,7 +9435,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/apps/Makefile src/apps/gource/Makefile src/apps/coast/Makefile src/core/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/apps/Makefile src/apps/gource/Makefile src/apps/lca/Makefile src/core/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -9936,7 +10008,7 @@ do
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/apps/Makefile") CONFIG_FILES="$CONFIG_FILES src/apps/Makefile" ;;
     "src/apps/gource/Makefile") CONFIG_FILES="$CONFIG_FILES src/apps/gource/Makefile" ;;
-    "src/apps/coast/Makefile") CONFIG_FILES="$CONFIG_FILES src/apps/coast/Makefile" ;;
+    "src/apps/lca/Makefile") CONFIG_FILES="$CONFIG_FILES src/apps/lca/Makefile" ;;
     "src/core/Makefile") CONFIG_FILES="$CONFIG_FILES src/core/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5

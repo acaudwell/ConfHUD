@@ -32,12 +32,11 @@ class TimetableEntry {
 public:
     std::string room;
     std::string description;
-    time_t start_time;
     std::string display_time;
 
-    FXFont font;
+    FXFont font, font2;
 
-    TimetableEntry(std::string room, std::string description, time_t start_time);
+    TimetableEntry(std::string room, std::string description, std::string display_time);
 
     void draw(float dt, float table_alpha);
 };
@@ -61,7 +60,7 @@ protected:
     std::string timetablefile;
 
     void deleteEntries();
-    void addEntry(std::string room, std::string description, time_t start_time);
+    void addEntry(std::string room, std::string description, std::string display_time);
 public:
     Timetable(std::string title, std::string timetablefile);
     ~Timetable();

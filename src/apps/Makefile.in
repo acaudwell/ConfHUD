@@ -5,8 +5,8 @@ CXXFLAGS = @CXXFLAGS@
 
 CXX = g++
 
-SUBDIRS = coast gource
-objects = lcaapp.o gapp.o
+SUBDIRS = lca gource
+objects = lcaapp.o gapp.o slideapp.o
 
 all: makeapps $(objects)
 
