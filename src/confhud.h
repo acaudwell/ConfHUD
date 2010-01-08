@@ -57,6 +57,8 @@ protected:
 
     FXFont font, scrollfont;
 
+    TextureResource* footer;
+
     std::string scroll_message;
     float scroll_message_width;
     float scroll_message_x;
@@ -87,6 +89,7 @@ protected:
     void updateColours(float dt);
     void updateConfApp(float dt);
     void drawConfApp(float dt);
+    void drawBackground(float dt);
 public:
     ConfHUD(ConfFile* conf);
     ~ConfHUD();

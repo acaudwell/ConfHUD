@@ -10,7 +10,7 @@ ConfApp::ConfApp(std::string conffile) {
     prepared        = false;
     duration        = 120.0;
     elapsed         = 0.0;
-    fixed_tick_rate = 0.0;
+    max_tick_rate   = 0.0;
     scaled_t        = 0.0;
     scaled_dt       = 0.0;
 
@@ -137,9 +137,7 @@ void ConfApp::logic(float dt) {
 
     if(duration>0.0) this->elapsed += dt;
 
-    if(fixed_tick_rate>0.0) {
-        dt = fixed_tick_rate;
-    }
+    dt = std::min(max_tick_rate, dt);
 
     scaled_t += dt;
     scaled_dt = dt;

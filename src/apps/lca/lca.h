@@ -4,11 +4,6 @@
 #include "core/sdlapp.h"
 
 class LCABackground : public SDLApp {
-
-    TextureResource* footer;
-
-protected:
-    void drawBackground();
 public:
     LCABackground();
     ~LCABackground();

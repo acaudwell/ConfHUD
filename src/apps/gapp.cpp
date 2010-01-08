@@ -1,7 +1,7 @@
 #include "gapp.h"
 
 GourceApp::GourceApp(std::string conffile) : ConfApp(conffile) {
-    fixed_tick_rate = 1.0 / 60.0;
+    max_tick_rate = 1.0 / 60.0;
 }
 
 void GourceApp::init() {
@@ -11,7 +11,7 @@ void GourceApp::init() {
 
     bool hidefilenames=false;
 
-    float bloom_intensity = 0.75;
+    float bloom_intensity = 0.25;
     float bloom_multiplier = 1.0;
 
     bool zoomin=false;
@@ -56,6 +56,7 @@ void GourceApp::init() {
         background = config.getVec3("gource", "background");
     }
 
+    gGourceDrawBackground  = false;
     gGourceDisableProgress = true;
 
     gGourceHideFilenames = hidefilenames;

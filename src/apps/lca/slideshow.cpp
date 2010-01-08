@@ -1,6 +1,6 @@
 #include "slideshow.h"
 
-SlideShow::SlideShow(float image_duration) : LCABackground() {
+SlideShow::SlideShow(float image_duration) : SDLApp() {
     duration = image_duration;
     image = 0;
     image_index = 0;
@@ -94,8 +94,6 @@ void SlideShow::draw(float t, float dt) {
     if(appFinished || image==0) return;
 
     display.mode2D();
-
-    drawBackground();
 
     glPushMatrix();
 
