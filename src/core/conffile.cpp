@@ -250,6 +250,14 @@ bool ConfSection::getBool(std::string key) {
     return false;
 }
 
+vec2f ConfSection::getVec2(std::string key) {
+    ConfEntry* entry = getEntry(key);
+
+    if(entry) return entry->getVec2();
+
+    return vec2f(0.0, 0.0);
+}
+
 vec3f ConfSection::getVec3(std::string key) {
     ConfEntry* entry = getEntry(key);
 
@@ -492,6 +500,14 @@ bool ConfFile::getBool(std::string section, std::string key) {
     if(entry) return entry->getBool();
 
     return false;
+}
+
+vec2f ConfFile::getVec2(std::string section, std::string key) {
+    ConfEntry* entry = getEntry(section, key);
+
+    if(entry) return entry->getVec2();
+
+    return vec2f(0.0, 0.0);
 }
 
 vec3f ConfFile::getVec3(std::string section, std::string key) {
