@@ -14,6 +14,7 @@ void GourceApp::init() {
     float bloom_intensity = 0.25;
     float bloom_multiplier = 1.0;
 
+    bool drawBackground=false;
     bool zoomin=false;
 
     std::string logfile;
@@ -54,9 +55,10 @@ void GourceApp::init() {
 
     if(config.hasValue("gource", "background")) {
         background = config.getVec3("gource", "background");
+        drawBackground = true;
     }
 
-    gGourceDrawBackground  = false;
+    gGourceDrawBackground  = drawBackground;
     gGourceDisableProgress = true;
 
     gGourceHideFilenames = hidefilenames;
