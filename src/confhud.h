@@ -59,9 +59,13 @@ protected:
 
     TextureResource* footer;
 
+    TextureResource* logo;
+    vec2f logo_pos;
+
     std::string scroll_message;
     float scroll_message_width;
     float scroll_message_x;
+    float scroll_message_y;
 
     void updateScrollMessage();
 
@@ -90,6 +94,7 @@ protected:
     void updateConfApp(float dt);
     void drawConfApp(float dt);
     void drawBackground(float dt);
+    void drawLogo(float dt);
 public:
     ConfHUD(ConfFile* conf);
     ~ConfHUD();

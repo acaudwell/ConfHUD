@@ -144,6 +144,10 @@ ConfHUD::ConfHUD(ConfFile* conf) {
     timetable_viewer = 0;
     confapp = 0;
 
+    logo = 0;
+
+    scroll_message_y = display.height - 120;
+
     font = fontmanager.grab("FreeSans.ttf", 16);
     font.dropShadow(true);
     font.roundCoordinates(true);
@@ -185,6 +189,19 @@ void ConfHUD::readConfig() {
     }
 
     int timetable_no = 1;
+
+    if(conf->hasValue("settings", "message_y")) {
+        scroll_message_y = conf->getFloat("settings", "message_y");
+    }
+
+    if(conf->hasValue("settings", "logo_file")) {
+        std::string logo_file = conf->getString("settings", "logo_file");
+        logo_pos = conf->getVec2("settings", "logo_position");
+
+        if(logo_file.size()) {
+            logo = texturemanager.grab(logo_file, 1, 1, 0, true);
+        }
+    }
 
     ConfSectionList* timetables = conf->getSections("timetable");
 
@@ -507,6 +524,34 @@ void ConfHUD::drawBackground(float dt) {
     glEnd();
 }
 
+void ConfHUD::drawLogo(float dt) {
+    if(logo==0) return;
+
+    glBindTexture(GL_TEXTURE_2D, logo->textureid);
+
+    glPushMatrix();
+
+    glTranslatef(logo_pos.x, logo_pos.y, 0.0f);
+
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(0.0f, 0.0f);
+
+        glTexCoord2f(1.0, 0.0f);
+        glVertex2f(logo->w, 0.0f);
+
+        glTexCoord2f(1.0, 1.0f);
+        glVertex2f(logo->w, logo->h);
+
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(0.0f, logo->h);
+    glEnd();
+
+    glPopMatrix();
+}
+
 void ConfHUD::draw() {
 
     display.clear();
@@ -536,7 +581,10 @@ void ConfHUD::draw() {
 
     glColor4f(gConfHUDColourMessage.x, gConfHUDColourMessage.y, gConfHUDColourMessage.z, 1.0);
 
-    scrollfont.draw(scroll_message_x, display.height - 120.0, scroll_message);
+    scrollfont.draw(scroll_message_x, scroll_message_y, scroll_message);
+
+    //draw logo
+    drawLogo(dt);
 
     if(debug) {
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
