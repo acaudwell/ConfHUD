@@ -696,6 +696,8 @@ PKG_CONFIG
 FTGL_CFLAGS
 FTGL_LIBS
 sdlappfontdir
+sdlappinitdir
+sdlappconfdir
 LTLIBOBJS'
 ac_subst_files=''
       ac_precious_vars='build_alias
@@ -9435,6 +9437,13 @@ fi
 
 
 
+sdlappinitdir="/etc/init.d"
+
+
+sdlappconfdir="/etc/confhud"
+
+
+
 ac_config_files="$ac_config_files Makefile src/Makefile src/apps/Makefile src/apps/gource/Makefile src/apps/lca/Makefile src/core/Makefile"
 
 cat >confcache <<\_ACEOF
@@ -10149,10 +10158,12 @@ PKG_CONFIG!$PKG_CONFIG$ac_delim
 FTGL_CFLAGS!$FTGL_CFLAGS$ac_delim
 FTGL_LIBS!$FTGL_LIBS$ac_delim
 sdlappfontdir!$sdlappfontdir$ac_delim
+sdlappinitdir!$sdlappinitdir$ac_delim
+sdlappconfdir!$sdlappconfdir$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 80; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 82; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

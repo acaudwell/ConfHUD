@@ -96,7 +96,7 @@ protected:
     void drawBackground(float dt);
     void drawLogo(float dt);
 public:
-    ConfHUD(ConfFile* conf);
+    ConfHUD(std::string conffile);
     ~ConfHUD();
 
     void update(float t, float dt);

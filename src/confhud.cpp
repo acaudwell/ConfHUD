@@ -135,9 +135,13 @@ void confhud_help(std::string error) {
     }
 }
 
-ConfHUD::ConfHUD(ConfFile* conf) {
+ConfHUD::ConfHUD(std::string conffile) {
 
-    this->conf = conf;
+    this->conf = new ConfFile();
+
+    if(!conf->load(gSDLAppConfDir + conffile)) {
+        confhud_help("failed to load confhud.conf");
+    }
 
     debug = false;
 
@@ -224,6 +228,8 @@ void ConfHUD::readConfig() {
 
 ConfHUD::~ConfHUD() {
     reset();
+
+    delete conf;
 
     if(timetable_viewer != 0) delete timetable_viewer;
 
@@ -329,6 +335,7 @@ void ConfHUD::readPlaylist() {
 }
 
 ConfApp* ConfHUD::getNextApp() {
+
     if(confapp != 0) {
         delete confapp;
         confapp = 0;
@@ -356,7 +363,9 @@ ConfApp* ConfHUD::getNextApp() {
 
         if(app != 0) {
             app->prepare();
-            app->init();
+            if(!app->prepareFailed()) {
+                app->init();
+            }
         }
 
         transition = 1.0;

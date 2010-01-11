@@ -82,6 +82,13 @@ AC_CHECK_HEADER([pcre.h],, AC_MSG_ERROR(pcre.h is required. Please see README))
 AC_ARG_ENABLE(ttf-font-dir,[AS_HELP_STRING([--enable-ttf-font-dir=DIR],[directory containing FreeSans.ttf])],[sdlappfontdir="$enableval"],[sdlappfontdir=""])
 AC_SUBST(sdlappfontdir)
 
+sdlappinitdir="/etc/init.d"
+AC_SUBST(sdlappinitdir)
+
+sdlappconfdir="/etc/confhud"
+AC_SUBST(sdlappconfdir)
+
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/apps/Makefile

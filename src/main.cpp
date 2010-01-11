@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
     std::vector<std::string> arguments;
 
-    display.displayArgs(argc, argv, &width, &height, &fullscreen, &arguments);
+    SDLAppParseArgs(argc, argv, &width, &height, &fullscreen, &arguments);
 
     for(int i=0;i<arguments.size();i++) {
         std::string args = arguments[i];
@@ -56,16 +56,6 @@ int main(int argc, char *argv[]) {
         confhud_help(arg_error);
     }
 
-    //test confreader
-    ConfFile config;
-
-    if(!config.load("confhud.conf")) {
-        if(!config.load("/etc/confhud.conf")) {
-            confhud_help("failed to read confhud.conf\n");
-            exit(1);
-        }
-    }
-
     // this causes corruption on some video drivers
     if(multisample) {
         display.multiSample(4);
@@ -81,7 +71,7 @@ int main(int argc, char *argv[]) {
 
     if(multisample) glEnable(GL_MULTISAMPLE_ARB);
 
-    ConfHUD* conf = new ConfHUD(&config);
+    ConfHUD* conf = new ConfHUD("confhud.conf");
 
     conf->run();
 

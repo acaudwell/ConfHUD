@@ -3,8 +3,8 @@ exec_prefix = ${prefix}
 bindir = ${exec_prefix}/bin
 datarootdir = @datarootdir@
 sysconfdir = @sysconfdir@
-sdlappconfdir = $(sysconfdir)/confhud
 sdlappdatadir = $(datarootdir)/confhud
+sdlappconfdir = @sdlappconfdir@
 sdlappfontdir = @sdlappfontdir@
 
 CXX = g++
