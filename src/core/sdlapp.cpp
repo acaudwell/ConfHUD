@@ -28,6 +28,7 @@
 #include "sdlapp.h"
 
 std::string gSDLAppResourceDir;
+std::string gSDLAppConfDir;
 
 #ifdef _WIN32
 std::string gSDLAppPathSeparator = "\\";
@@ -43,6 +44,7 @@ bool SDLAppDirExists(std::string dir) {
 void SDLAppInit() {
     if(gSDLAppResourceDir.size()>0) return;
 
+    std::string conf_dir     = "";
     std::string resource_dir = "data/";
     std::string fonts_dir    = "data/fonts/";
 #ifdef _WIN32
@@ -55,6 +57,7 @@ void SDLAppInit() {
     int pos = exepath.rfind("\\");
 
     std::string path = exepath.substr(0, pos+1);
+    conf_dir     = path + std::string("\\");
     resource_dir = path + std::string("\\data\\");
     fonts_dir    = path + std::string("\\data\\fonts\\");
 #else
@@ -62,10 +65,18 @@ void SDLAppInit() {
     char cwd_buff[1024];
 
     if(getcwd(cwd_buff, 1024) == cwd_buff) {
+        conf_dir     = std::string(cwd_buff) + std::string("/");
         resource_dir = std::string(cwd_buff) + std::string("/") + resource_dir;
         fonts_dir    = std::string(cwd_buff) + std::string("/") + fonts_dir;
     }
 
+#endif
+
+#ifdef SDLAPP_CONF_DIR
+    if (SDLAppDirExists(SDLAPP_CONF_DIR)) {
+        debugLog("conf dir test = %s\n", SDLAPP_CONF_DIR);
+        conf_dir = SDLAPP_CONF_DIR;
+    }
 #endif
 
 #ifdef SDLAPP_RESOURCE_DIR
@@ -85,6 +96,7 @@ void SDLAppInit() {
     fontmanager.setDir(fonts_dir);
 
     gSDLAppResourceDir = resource_dir;
+    gSDLAppConfDir = conf_dir;
 }
 
 void SDLAppParseArgs(int argc, char *argv[], int* xres, int* yres, bool* fullscreen, std::vector<std::string>* otherargs) {

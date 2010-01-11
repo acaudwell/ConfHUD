@@ -33,6 +33,7 @@
 
 #include <vector>
 
+extern std::string gSDLAppConfDir;
 extern std::string gSDLAppResourceDir;
 extern std::string gSDLAppPathSeparator;
 

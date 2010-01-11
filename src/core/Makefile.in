@@ -2,6 +2,8 @@ prefix = @prefix@
 exec_prefix = ${prefix}
 bindir = ${exec_prefix}/bin
 datarootdir = @datarootdir@
+sysconfdir = @sysconfdir@
+sdlappconfdir = $(sysconfdir)/confhud
 sdlappdatadir = $(datarootdir)/confhud
 sdlappfontdir = @sdlappfontdir@
 
@@ -13,6 +15,10 @@ CXXFLAGS = @CXXFLAGS@
 
 ifdef sdlappdatadir
 CPPFLAGS += -DSDLAPP_RESOURCE_DIR=\"$(sdlappdatadir)\"
+endif
+
+ifdef sdlappconfdir
+CPPFLAGS += -DSDLAPP_CONF_DIR=\"$(sdlappconfdir)\"
 endif
 
 ifdef sdlappfontdir
