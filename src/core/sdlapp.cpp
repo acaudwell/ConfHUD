@@ -41,6 +41,16 @@ bool SDLAppDirExists(std::string dir) {
     return !stat(dir.c_str(), &st) && S_ISDIR(st.st_mode);
 }
 
+std::string SDLAppAddSlash(std::string path) {
+
+    //append slash unless the path is empty
+    if(path.size() && path[path.size()-1] != gSDLAppPathSeparator[0]) {
+        path += gSDLAppPathSeparator;
+    }
+
+    return path;
+}
+
 void SDLAppInit() {
     if(gSDLAppResourceDir.size()>0) return;
 
@@ -91,6 +101,10 @@ void SDLAppInit() {
         fonts_dir    = SDLAPP_FONT_DIR;
     }
 #endif
+
+    resource_dir = SDLAppAddSlash(resource_dir);
+    conf_dir     = SDLAppAddSlash(conf_dir);
+    fonts_dir    = SDLAppAddSlash(fonts_dir);
 
     texturemanager.setDir(resource_dir);
     fontmanager.setDir(fonts_dir);
