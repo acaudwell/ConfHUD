@@ -1,0 +1,31 @@
+NAME=confhud
+DAEMON=/home/andrewc/source/git/confhud/confhud
+DAEMON_OPTS=""
+
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+export DISPLAY=":0.0"
+
+case "$1" in
+  start)
+        echo -n "Starting daemon: "$NAME
+	start-stop-daemon --start --background --quiet --exec $DAEMON -- $DAEMON_OPTS
+        echo "."
+	;;
+  stop)
+        echo -n "Stopping daemon: "$NAME
+	start-stop-daemon --stop --name confhud --quiet --oknodo
+        echo "."
+	;;
+  restart)
+        echo -n "Restarting daemon: "$NAME
+	start-stop-daemon --stop --name confhud --quiet --oknodo --retry 30
+	start-stop-daemon --start --background --quiet --exec $DAEMON -- $DAEMON_OPTS
+	echo "."
+	;;
+
+  *)
+	echo "Usage: "$1" {start|stop|restart}"
+	exit 1
+esac
+
+exit 0
