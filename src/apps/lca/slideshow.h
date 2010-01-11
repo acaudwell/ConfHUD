@@ -5,7 +5,7 @@
 
 #include "lca.h"
 
-class SlideShow : public LCABackground {
+class SlideShow : public SDLApp {
 
     TextureResource* image;
     std::vector<std::string> images;

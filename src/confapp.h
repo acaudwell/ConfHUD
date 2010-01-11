@@ -12,7 +12,7 @@ protected:
     float duration;
     float elapsed;
 
-    float fixed_tick_rate;
+    float max_tick_rate;
 
     float scaled_t;
     float scaled_dt;
