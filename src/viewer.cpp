@@ -24,7 +24,7 @@ TimetableViewer::TimetableViewer() {
 
     font = fontmanager.grab("FreeSans.ttf", 32);
     font.shadowStrength(0.4);
-    font.dropShadow(false);
+    font.dropShadow(true);
     font.roundCoordinates(true);
 
     reset();
