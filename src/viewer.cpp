@@ -17,29 +17,38 @@
 
 #include "viewer.h"
 
-float gConfHUDTimetableDuration = 15.0;
-
 // TimetableViewer
 
 TimetableViewer::TimetableViewer() {
-    next_timetable = false;
-    current_timetable = 0;
-
-    duration_length = gConfHUDTimetableDuration;
-    duration        = duration_length;
+    this->duration = 15.0;
 
     font = fontmanager.grab("FreeSans.ttf", 32);
     font.shadowStrength(0.4);
     font.dropShadow(false);
     font.roundCoordinates(true);
+
+    reset();
 }
 
 TimetableViewer::~TimetableViewer() {
+    reset();
+}
+
+void TimetableViewer::reset() {
+    next_timetable = false;
+    current_timetable = 0;
+    elapsed = duration;
+
     for(std::vector<Timetable*>::iterator it = timetables.begin(); it != timetables.end(); it++) {
         Timetable* timetable = *it;
         delete timetable;
     }
+
     timetables.clear();
+}
+
+void TimetableViewer::setDuration(float duration) {
+    this->duration = duration;
 }
 
 void TimetableViewer::nextTimetable() {
@@ -63,9 +72,9 @@ void TimetableViewer::logic(float dt) {
 
     if(timetables.size() == 0) return;
 
-    if(duration > 0.0) {
-        duration -= dt;
-        if(duration <= 0.0) nextTimetable();
+    if(elapsed > 0.0) {
+        elapsed -= dt;
+        if(elapsed <= 0.0) nextTimetable();
     }
 
     Timetable* current = timetables[current_timetable];
@@ -79,7 +88,7 @@ void TimetableViewer::logic(float dt) {
         current->fadeIn();
 
         next_timetable = false;
-        duration = duration_length;
+        elapsed = duration;
     }
 
     current->logic(dt);

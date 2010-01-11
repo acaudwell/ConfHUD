@@ -36,7 +36,7 @@
 
 #include "confapp.h"
 #include "apps/gapp.h"
-#include "apps/lcaapp.h"
+#include "apps/blankapp.h"
 #include "apps/slideapp.h"
 
 #include "viewer.h"
@@ -69,7 +69,7 @@ protected:
 
     void updateScrollMessage();
 
-    ConfFile* conf;
+    ConfFile conf;
 
     std::string message_file;
 
@@ -80,13 +80,18 @@ protected:
 
     ConfApp* confapp;
 
-    std::string playlist_file;
-    std::vector<std::string> playlist;
+    ConfFile playlist;
+    std::string playlist_conf;
     int playlist_index;
+
+    std::string timetable_conf;
 
     GLuint lastFrame;
     float transition;
 
+    void reloadConfig();
+
+    void readTimetables();
     void readPlaylist();
     ConfApp* getNextApp();
 
@@ -108,5 +113,7 @@ public:
     void mouseMove(SDL_MouseMotionEvent *e);
     void mouseClick(SDL_MouseButtonEvent *e);
 };
+
+extern bool gConfHUDReload;
 
 #endif

@@ -17,7 +17,7 @@
 
 #include "confhud.h"
 
-Regex playlist_line("^([^\\|]+)\\|(.+)$");
+bool gConfHUDReload = false;
 
 #ifdef _WIN32
 HWND confHUDconsoleWindow = 0;
@@ -119,7 +119,6 @@ void confhud_help(std::string error) {
     printf("  -h, --help                       Help\n\n");
     printf("  -WIDTHxHEIGHT                    Set window size\n");
     printf("  -f                               Fullscreen\n\n");
-    printf("  --duration SECONDS               Time duration each timetable is shown\n\n");
 
 
 #ifdef _WIN32
@@ -137,15 +136,13 @@ void confhud_help(std::string error) {
 
 ConfHUD::ConfHUD(std::string conffile) {
 
-    this->conf = new ConfFile();
-
-    if(!conf->load(gSDLAppConfDir + conffile)) {
+    if(!conf.load(gSDLAppConfDir + conffile)) {
         confhud_help("failed to load confhud.conf");
     }
 
     debug = false;
 
-    timetable_viewer = 0;
+    timetable_viewer = new TimetableViewer();
     confapp = 0;
 
     logo = 0;
@@ -161,16 +158,11 @@ ConfHUD::ConfHUD(std::string conffile) {
     scrollfont.dropShadow(true);
     scrollfont.roundCoordinates(true);
 
-    footer = texturemanager.grab("footer.jpg");
     //make footer repeat horizontally
+    footer = texturemanager.grab("footer.jpg");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-
     lastFrame = display.emptyTexture(display.width, display.height);
-
-    playlist_index = -1;
-
-    transition = 0.0;
 
     reset();
     readConfig();
@@ -180,34 +172,66 @@ ConfHUD::ConfHUD(std::string conffile) {
 
 
 void ConfHUD::reset() {
-    if(timetable_viewer !=0) delete timetable_viewer;
-    timetable_viewer = new TimetableViewer();
+    if(confapp != 0) {
+        delete confapp;
+        confapp = 0;
+    }
+
+    playlist_index = -1;
+    transition = 0.0;
+    timetable_viewer->reset();
+}
+
+void ConfHUD::reloadConfig() {
+    gConfHUDReload = false;
+
+    reset();
+    readConfig();
+    updateScrollMessage();
 }
 
 void ConfHUD::readConfig() {
-    if(!conf->load()) return;
+    if(!conf.load()) return;
 
-    if(conf->hasSection("settings")) {
-        message_file = conf->getString("settings", "message_file");
-        playlist_file = conf->getString("settings", "playlist_file");
+    if(conf.hasSection("settings")) {
+        message_file   = conf.getString("settings", "message_file");
+        playlist_conf  = conf.getString("settings", "playlist_conf");
+        timetable_conf = conf.getString("settings", "timetable_conf");
     }
 
-    int timetable_no = 1;
-
-    if(conf->hasValue("settings", "message_y")) {
-        scroll_message_y = conf->getFloat("settings", "message_y");
+    if(conf.hasValue("settings", "message_y")) {
+        scroll_message_y = conf.getFloat("settings", "message_y");
     }
 
-    if(conf->hasValue("settings", "logo_file")) {
-        std::string logo_file = conf->getString("settings", "logo_file");
-        logo_pos = conf->getVec2("settings", "logo_position");
+    if(conf.hasValue("settings", "logo_file")) {
+        std::string logo_file = conf.getString("settings", "logo_file");
+        logo_pos = conf.getVec2("settings", "logo_position");
 
         if(logo_file.size()) {
             logo = texturemanager.grab(logo_file, 1, 1, 0, true);
         }
     }
 
-    ConfSectionList* timetables = conf->getSections("timetable");
+    readTimetables();
+}
+
+void ConfHUD::readTimetables() {
+    if(!timetable_conf.size()) return;
+
+    ConfFile ttconf;
+    if(!ttconf.load(timetable_conf)) {
+        debugLog("failed to read  timetable conf '%s'\n", timetable_conf.c_str());
+    }
+
+    float viewer_duration = ttconf.getFloat("settings", "duration");
+
+    //check the value is sensible
+    if(viewer_duration<1.0) viewer_duration = 15.0;
+    timetable_viewer->setDuration(viewer_duration);
+
+    timetable_viewer->reset();
+
+    ConfSectionList* timetables = ttconf.getSections("timetable");
 
     if(timetables == 0) return;
 
@@ -229,10 +253,7 @@ void ConfHUD::readConfig() {
 ConfHUD::~ConfHUD() {
     reset();
 
-    delete conf;
-
     if(timetable_viewer != 0) delete timetable_viewer;
-
     if(lastFrame != 0) glDeleteTextures(1, &lastFrame);
 }
 
@@ -289,6 +310,10 @@ void ConfHUD::keyPress(SDL_KeyboardEvent *e) {
             debug = !debug;
         }
 
+        if (e->keysym.sym == SDLK_r) {
+            gConfHUDReload = true;
+        }
+
         if (e->keysym.sym == SDLK_n) {
             nextApp = true;
         }
@@ -310,27 +335,11 @@ void ConfHUD::updateColours(float dt) {
 }
 
 void ConfHUD::readPlaylist() {
-    if(playlist_file.size()==0) return;
+    if(playlist_conf.size()==0) return;
 
-    std::ifstream in(playlist_file.c_str());
-
-    if(!in.is_open()) {
-        debugLog("failed to open playlist file '%s'\n", playlist_file.c_str());
+    if(!playlist.load(playlist_conf)) {
+        debugLog("failed to open playlist conf '%s'\n", playlist_conf.c_str());
         return;
-    }
-
-    playlist.clear();
-
-    char buff[1024];
-
-    while(in.getline(buff, 1024)) {
-
-        std::string line = std::string(buff);
-
-        if(line.size()==0 || line[0] == '#') continue;
-        if(!playlist_line.match(line)) continue;
-
-        playlist.push_back(line);
     }
 }
 
@@ -343,18 +352,27 @@ ConfApp* ConfHUD::getNextApp() {
 
     readPlaylist();
 
-    playlist_index = (playlist_index + 1) % playlist.size();
+    ConfSectionList* confapps = playlist.getSections("confapp");
 
-    std::vector<std::string> listentry;
+    if(confapps == 0) return 0;
 
-    if(playlist_line.match(playlist[playlist_index], &listentry)) {
-        std::string appname = listentry[0];
-        std::string appconf = listentry[1];
+    playlist_index = (playlist_index + 1) % confapps->size();
+
+    ConfSectionList::iterator it = confapps->begin();
+    for(int i=0;i<playlist_index;i++) it++;
+
+    ConfSection* appcfg = (*it);
+
+    debugLog("type=%s\n", appcfg->getString("type").c_str());
+
+    if(appcfg->hasValue("type") && appcfg->hasValue("config")) {
+        std::string appname = appcfg->getString("type");
+        std::string appconf = appcfg->getString("config");
 
         ConfApp* app = 0;
 
-        if(appname == "lca") {
-            app = new LCAApp(appconf);
+        if(appname == "blank") {
+            app = new BlankApp(appconf);
         } else if(appname == "slideshow") {
             app = new SlideShowApp(appconf);
         } else if(appname == "gource") {
@@ -428,6 +446,7 @@ void ConfHUD::drawConfApp(float dt) {
 }
 
 void ConfHUD::logic() {
+    if(gConfHUDReload) reloadConfig();
 
     //update scroll bar
     scroll_message_x -= dt * 120.0f;

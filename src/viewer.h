@@ -28,7 +28,7 @@ protected:
     int current_timetable;
     bool next_timetable;
 
-    float duration, duration_length;
+    float duration, elapsed;
 
 public:
     TimetableViewer();
@@ -36,12 +36,13 @@ public:
 
     void addTimetable(std::string title, std::string timetablefile);
 
+    void setDuration(float duration);
     void nextTimetable();
+
+    void reset();
 
     void logic(float dt);
     void draw(float dt);
 };
-
-extern float gConfHUDTimetableDuration;
 
 #endif
