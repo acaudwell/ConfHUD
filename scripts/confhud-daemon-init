@@ -9,12 +9,17 @@ case "$1" in
   start)
         echo -n "Starting daemon: "$NAME
 	start-stop-daemon --start --background --quiet --exec $DAEMON -- $DAEMON_OPTS
-        echo "."
+	echo "."
 	;;
   stop)
         echo -n "Stopping daemon: "$NAME
 	start-stop-daemon --stop --name confhud --quiet --oknodo
-        echo "."
+	echo "."
+	;;
+  reload)
+        echo -n "Reloading configuration: "$NAME
+    start-stop-daemon --signal HUP --stop --name confhud --quiet --oknodo
+	echo "."
 	;;
   restart)
         echo -n "Restarting daemon: "$NAME
@@ -24,7 +29,7 @@ case "$1" in
 	;;
 
   *)
-	echo "Usage: "$1" {start|stop|restart}"
+	echo "Usage: "$1" {start|stop|reload|restart}"
 	exit 1
 esac
 

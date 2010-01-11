@@ -134,7 +134,17 @@ void confhud_help(std::string error) {
     }
 }
 
+void confhud_trigger_reload(int param) {
+    gConfHUDReload=true;
+}
+
+
 ConfHUD::ConfHUD(std::string conffile) {
+
+#ifdef SIGHUP
+    //register to handle HUP signal
+    signal (SIGHUP, confhud_trigger_reload);
+#endif
 
     if(!conf.load(gSDLAppConfDir + conffile)) {
         confhud_help("failed to load confhud.conf");

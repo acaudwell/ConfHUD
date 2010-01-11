@@ -28,6 +28,7 @@
 
 #include <list>
 #include <dirent.h>
+#include <signal.h>
 
 #include "core/display.h"
 #include "core/sdlapp.h"
@@ -45,6 +46,7 @@ void createWindowsConsole();
 
 void confhud_info(std::string msg);
 void confhud_help(std::string error);
+void confhud_trigger_reload(int param);
 
 class ConfHUD : public SDLApp {
 
