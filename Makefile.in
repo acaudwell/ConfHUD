@@ -3,6 +3,9 @@ exec_prefix = ${prefix}
 bindir = ${exec_prefix}/bin
 datarootdir = @datarootdir@
 mandir = ${datarootdir}/man
+sysconfdir = @sysconfdir@
+sdlappinitdir = @sdlappinitdir@
+sdlappconfdir = @sdlappconfdir@
 sdlappdatadir = $(datarootdir)/confhud
 sdlappfontdir = @sdlappfontdir@
 
@@ -11,20 +14,26 @@ SUBDIRS = src
 all:
 	for dir in ${SUBDIRS} ; do ( cd $$dir ; ${MAKE} all ); done
 
-# install not supported right now
-# install: all
-#         mkdir -p -m 755 $(DESTDIR)/$(bindir)
-#         mkdir -p -m 755 ${DESTDIR}/$(sdlappdatadir)
-#         mkdir -p -m 755 ${DESTDIR}/$(mandir)/man1
-#         cp data/*.png ${DESTDIR}/$(sdlappdatadir)/
-#         cp confhud ${DESTDIR}/$(bindir)/
+install: all
+	mkdir -p -m 755 $(DESTDIR)/$(bindir)
+	mkdir -p -m 755 ${DESTDIR}/$(sdlappdatadir)
+	mkdir -p -m 755 ${DESTDIR}/$(sdlappconfdir)
+	cp data/*.png ${DESTDIR}/$(sdlappdatadir)/
+	cp data/*.tga ${DESTDIR}/$(sdlappdatadir)/
+	cp data/*.jpg ${DESTDIR}/$(sdlappdatadir)/
+	cp data/gource.style ${DESTDIR}/$(sdlappdatadir)/
+	cp confhud ${DESTDIR}/$(bindir)/
+#	mkdir -p -m 755 ${DESTDIR}/$(mandir)/man1
 #         sed 's|CONFHUD_DATADIR|$(sdlappdatadir)|g' data/confhud.1 > ${DESTDIR}/$(mandir)/man1/confhud.1
 #         gzip -f9 ${DESTDIR}/$(mandir)/man1/confhud.1
-# ifndef sdlappfontdir
-#         mkdir -p -m 755 ${DESTDIR}/$(sdlappdatadir)/fonts
-#         cp data/fonts/*.ttf ${DESTDIR}/$(sdlappdatadir)/fonts/
-#         cp data/fonts/README ${DESTDIR}/$(sdlappdatadir)/fonts/
-# endif
+ifdef sdlappinitdir
+	cp scripts/confhud-daemon-init ${DESTDIR}/$(sdlappinitdir)/confhud
+endif
+ifndef sdlappfontdir
+	mkdir -p -m 755 ${DESTDIR}/$(sdlappdatadir)/fonts
+	cp data/fonts/*.ttf ${DESTDIR}/$(sdlappdatadir)/fonts/
+	cp data/fonts/README ${DESTDIR}/$(sdlappdatadir)/fonts/
+endif
 
 distclean:
 	for dir in ${SUBDIRS} ; do ( cd $$dir ; ${MAKE} distclean ); done
