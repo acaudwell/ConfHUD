@@ -39,6 +39,7 @@
 #include "apps/gapp.h"
 #include "apps/blankapp.h"
 #include "apps/slideapp.h"
+#include "apps/stackapp.h"
 
 #include "viewer.h"
 

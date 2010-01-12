@@ -385,6 +385,8 @@ ConfApp* ConfHUD::getNextApp() {
             app = new BlankApp(appconf);
         } else if(appname == "slideshow") {
             app = new SlideShowApp(appconf);
+        } else if(appname == "stackgraph") {
+            app = new StackApp(appconf);
         } else if(appname == "gource") {
             app = new GourceApp(appconf);
         }

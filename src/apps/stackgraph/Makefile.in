@@ -1,0 +1,19 @@
+LIBS = @LIBS@
+
+CPPFLAGS = @CPPFLAGS@
+CXXFLAGS = @CXXFLAGS@
+
+CXX = g++
+
+objects = graph.o node.o bet.o
+
+all: $(objects)
+
+distclean:
+	rm Makefile
+
+clean:
+	rm -f *.o
+
+%.o:%.cpp
+	$(CXX) -I../.. $(CXXFLAGS) $(CPPFLAGS) -c $+

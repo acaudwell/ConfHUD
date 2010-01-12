@@ -9444,7 +9444,7 @@ sdlappconfdir="/etc/confhud"
 
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/apps/Makefile src/apps/gource/Makefile src/apps/lca/Makefile src/core/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/apps/Makefile src/apps/gource/Makefile src/apps/stackgraph/Makefile src/core/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -10017,7 +10017,7 @@ do
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/apps/Makefile") CONFIG_FILES="$CONFIG_FILES src/apps/Makefile" ;;
     "src/apps/gource/Makefile") CONFIG_FILES="$CONFIG_FILES src/apps/gource/Makefile" ;;
-    "src/apps/lca/Makefile") CONFIG_FILES="$CONFIG_FILES src/apps/lca/Makefile" ;;
+    "src/apps/stackgraph/Makefile") CONFIG_FILES="$CONFIG_FILES src/apps/stackgraph/Makefile" ;;
     "src/core/Makefile") CONFIG_FILES="$CONFIG_FILES src/core/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5

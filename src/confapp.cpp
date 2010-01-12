@@ -8,7 +8,7 @@ ConfApp::ConfApp(std::string conffile) {
     prepare_failed  = false;
     ready           = false;
     prepared        = false;
-    duration        = 120.0;
+    duration        = 0.0;
     elapsed         = 0.0;
     max_tick_rate   = 0.0;
     scaled_t        = 0.0;
