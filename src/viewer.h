@@ -30,6 +30,9 @@ protected:
 
     float duration, elapsed;
 
+    Timetable* getCurrentTimetable();
+    void fadeOutCurrent();
+    void switchToNextPopulatedTimetable();
 public:
     TimetableViewer();
     ~TimetableViewer();
@@ -37,7 +40,6 @@ public:
     void addTimetable(std::string title, std::string timetablefile);
 
     void setDuration(float duration);
-    void nextTimetable();
 
     void reset();
 

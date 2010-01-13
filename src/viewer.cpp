@@ -36,8 +36,8 @@ TimetableViewer::~TimetableViewer() {
 
 void TimetableViewer::reset() {
     next_timetable = false;
-    current_timetable = 0;
-    elapsed = duration;
+    current_timetable = -1;
+    elapsed = -1.0;
 
     for(std::vector<Timetable*>::iterator it = timetables.begin(); it != timetables.end(); it++) {
         Timetable* timetable = *it;
@@ -51,55 +51,95 @@ void TimetableViewer::setDuration(float duration) {
     this->duration = duration;
 }
 
-void TimetableViewer::nextTimetable() {
-    if(timetables.size()==0) return;
+Timetable* TimetableViewer::getCurrentTimetable() {
+    if(current_timetable==-1 || current_timetable>=timetables.size()) return 0;
+
+    return timetables[current_timetable];
+}
+
+void TimetableViewer::fadeOutCurrent() {
+    Timetable* current = getCurrentTimetable();
 
     next_timetable = true;
 
-    Timetable* current = timetables[current_timetable];
+    if(current!=0) current->fadeOut();
+}
 
-    current->fadeOut();
+//get the next non blank timetable.. if they are all blank, sets current_timetable to -1
+void TimetableViewer::switchToNextPopulatedTimetable() {
+    debugLog("switchToNextPopulatedTimetable()\n");
+
+    if(timetables.size()==0) return;
+
+    int start = (current_timetable + 1) % timetables.size();
+    int next = start;
+
+    while(1) {
+        debugLog("current_timetable = %d, next = %d\n", current_timetable, next);
+
+        timetables[next]->refresh();
+
+        //found one with entries, use that
+        if(timetables[next]->getEntryCount() > 0) {
+
+            Timetable* prev = getCurrentTimetable();
+            if(prev!=0) prev->fadeOut();
+
+            current_timetable = next;
+
+            Timetable* current = getCurrentTimetable();
+
+            current->fadeIn();
+
+            return;
+        }
+
+        next = (next + 1) % timetables.size();
+
+        //if we've gone around in a loop and even the current one is empty, bail out
+        if(next == start) break;
+    }
+
+    //didnt find any
+    current_timetable = -1;
 }
 
 void TimetableViewer::addTimetable(std::string title, std::string timetablefile) {
     Timetable* timetable = new Timetable(title, timetablefile);
-
-//    if(timetable->getEntryCount() > 0) timetables.push_back(timetable);
-//    else delete timetable;
+    timetables.push_back(timetable);
 }
 
 void TimetableViewer::logic(float dt) {
 
     if(timetables.size() == 0) return;
 
-    if(elapsed > 0.0) {
-        elapsed -= dt;
-        if(elapsed <= 0.0) nextTimetable();
-    }
+    elapsed -= dt;
+    if(elapsed <= 0.0) fadeOutCurrent();
 
-    Timetable* current = timetables[current_timetable];
+    Timetable* current = getCurrentTimetable();
 
-    if(next_timetable && !current->isVisible()) {
-        current_timetable = (current_timetable + 1) % timetables.size();
+    if(next_timetable && (current==0|| !current->isVisible())) {
+        switchToNextPopulatedTimetable();
 
-        current = timetables[current_timetable];
-
-        current->refresh();
-        current->fadeIn();
+        //regardless of success or not, we will set set next_timetable to false
+        //so we dont try again for another duration
 
         next_timetable = false;
         elapsed = duration;
+
+        current = getCurrentTimetable();
     }
 
-    current->logic(dt);
+    if(current != 0) current->logic(dt);
+
 }
 
 void TimetableViewer::draw(float dt) {
      if(timetables.size() == 0) return;
 
-    Timetable* current = timetables[current_timetable];
+    Timetable* current = getCurrentTimetable();
 
-    if(current->getEntryCount()==0) return;
+    if(current==0 || current->getEntryCount()==0) return;
 
    //draw transparent background
     glDisable(GL_TEXTURE_2D);
