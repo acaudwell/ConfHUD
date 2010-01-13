@@ -22,7 +22,7 @@ install: all
 	cp data/*.tga ${DESTDIR}/$(sdlappdatadir)/
 	cp data/*.jpg ${DESTDIR}/$(sdlappdatadir)/
 	cp data/gource.style ${DESTDIR}/$(sdlappdatadir)/
-	cp confhud ${DESTDIR}/$(bindir)/
+	cp -f confhud ${DESTDIR}/$(bindir)/
 	cp scripts/confhud-config ${DESTDIR}/$(bindir)/
 	cp scripts/confhud-fetch ${DESTDIR}/$(bindir)/
 #	mkdir -p -m 755 ${DESTDIR}/$(mandir)/man1
