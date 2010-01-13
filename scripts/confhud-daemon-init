@@ -1,5 +1,5 @@
 NAME=confhud
-DAEMON=/home/andrewc/source/git/confhud/confhud
+DAEMON=/usr/local/bin/confhud
 DAEMON_OPTS=""
 
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
