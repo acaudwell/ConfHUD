@@ -64,8 +64,8 @@ void TimetableViewer::nextTimetable() {
 void TimetableViewer::addTimetable(std::string title, std::string timetablefile) {
     Timetable* timetable = new Timetable(title, timetablefile);
 
-    if(timetable->getEntryCount() > 0) timetables.push_back(timetable);
-    else delete timetable;
+//    if(timetable->getEntryCount() > 0) timetables.push_back(timetable);
+//    else delete timetable;
 }
 
 void TimetableViewer::logic(float dt) {
