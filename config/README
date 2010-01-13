@@ -1,0 +1,6 @@
+scripts/confhud-config will look for a sub directly in this folder and it install it:
+
+    CONFDIR/etc => /etc/confhud/
+    CONFDIR/var => /var/confhud/
+    CONFDIR/cron => /etc/cron.d/confhud
+
