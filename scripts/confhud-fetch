@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+#simple script to fetch a file move it to some specified dest file
+
+use strict;
+use warnings;
+
+use LWP::Simple;
+
+my($url, $destfile) = @ARGV or exit;
+
+my $tmpfile = "/tmp/$$.confhud-fetch";
+
+my $rc = getstore($url, $tmpfile);
+
+if($rc == 200) {
+    system('mv', $tmpfile, $destfile);
+}
+
+unlink($tmpfile);
