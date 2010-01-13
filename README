@@ -23,3 +23,10 @@ Building on Linux:
     ./configure
     make
 
+Installation:
+
+    make install
+    confhud-config config/example
+
+Will install the example config from the config/example sub directory.
+
