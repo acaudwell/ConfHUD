@@ -13,34 +13,9 @@ vec3f gTextBaseColour = vec3f(1.0, 1.0, 1.0);
 
 Regex readNodeDetail("^([0-9]+)\\|([^\\|]+)\\|([0-9\\.]+)");
 
-StackNode::StackNode(StackGraph* graph, std::string title, std::string logfile) {
-    this->graph = graph;
+StackNode::StackNode(StackGraph* graph, std::string title, float value, vec3f colour) {
     this->parent = 0;
-
-    debugLog("title = %s, value = %.2f\n", title.c_str(), value);
-
-    this->logfile = logfile;
-    this->title = title;
-    this->x = 0.0;
-    this->modified = 0.0;
-
-    this->tooltip_alpha = 0.0;
-    this->title_alpha = 0.0;
-    this->title_size = 16;
-
-    recent_mouse_over = 0.0;
-
-    setValue(-1);
-    current_value = 0.0;
-
-    alpha = 0.0;
-
-    initNode();
-}
-
-StackNode::StackNode(StackGraph* graph, StackNode* parent, std::string title, float value) {
     this->graph = graph;
-    this->parent = parent;
 
     debugLog("title = %s, value = %.2f\n", title.c_str(), value);
 
@@ -54,13 +29,12 @@ StackNode::StackNode(StackGraph* graph, StackNode* parent, std::string title, fl
 
     recent_mouse_over = 0.0;
 
-    setValue(value);
+    this->value = value;
     current_value = 0.0;
 
     alpha = 0.0;
 
-    //default colour if not specified
-    colour = parent->getColour();
+    setColour(colour);
 }
 
 StackNode::~StackNode() {
@@ -76,52 +50,18 @@ StackNode::~StackNode() {
     }
 }
 
-//attempts to read a file in var
-bool StackNode::initNode() {
-    //disabled recursive behaviour as in this
-    //case there is only one file
-    if(parent != 0) return false;
+void StackNode::setParent(StackNode* parent) {
+    this->parent = parent;
+}
 
-    std::ifstream f(logfile.c_str());
+void StackNode::addChild(StackNode* child) {
+    value += child->getValue();
 
-    if(!f.is_open()) return false;
+    child->setParent(this);
 
-    std::string linestr;
-
-    float total_value = 0.0;
-
-    while(std::getline( f, linestr )) {
-        debugLog("line: %s\n", linestr.c_str());
-
-        //read details
-        std::vector<std::string> matches;
-        if(!readNodeDetail.match(linestr, &matches)) continue;
-
-
-        time_t timestamp = atol(matches[0].c_str());
-
-        std::string child_title = matches[1];
-        float child_value = 0.0;
-
-        if(matches[2].size()>0) {
-            child_value = atof(matches[2].c_str());
-        }
-
-        StackNode* child = new StackNode(graph, this, child_title, child_value);
-
-        child->setColour(vec3Hash(child_title));
-
-        total_value += child->getValue();
-
-        children.push_back(child);
-    }
+    children.push_back(child);
 
     positionChildren();
-
-    // will always use total value of children
-    setValue(total_value);
-
-    return true;
 }
 
 //position children
@@ -252,7 +192,7 @@ void StackNode::onFocus() {
     }
 
     // show tips
-    min_node->showToolTip();
+//    min_node->showToolTip();
     if(min_node!=max_node) max_node->showToolTip();
 
 }
@@ -312,7 +252,7 @@ void StackNode::fetchBets() {
         if(rand() % 100 < 90) continue;
         if(node->isLoading()) continue;
 
-        int max_value = node->getValue() * 0.1f + 100.0f;
+        int max_value = node->getValue() * 0.1f + 10.0f;
 
         StackBet* bet = new StackBet(node, (float) (rand() % max_value) + 1);
         bets.push_back(bet);
@@ -375,7 +315,7 @@ void StackNode::updateBets(float dt) {
 }
 
 void StackNode::showToolTip() {
-    tooltip_alpha = 5.0;
+    tooltip_alpha = 10.0;
 }
 
 void StackNode::logic(float dt) {
@@ -385,7 +325,7 @@ void StackNode::logic(float dt) {
     }
 
     if(alpha < 1.0) {
-        alpha = std::min(1.0f, alpha + dt);
+        alpha = std::min(1.0f, alpha + dt*0.25f);
     }
 
     if(recent_mouse_over>0.0) recent_mouse_over -= dt*3.0;
@@ -509,7 +449,7 @@ void StackNode::drawBarToolTip(float tip_alpha) {
         line_end   = vec2f(0.0, top+0.5);
 
         line_start.x += bar_width - 1.0;
-        line_end.x   -= 10.0;
+        //line_end.x   -= 10.0;
     }
 
     //draw line
@@ -540,7 +480,7 @@ void StackNode::drawBarToolTip(float tip_alpha) {
 
         titlefont.draw(line_end.x + 5.0f, line_start.y + (line_end.y-line_start.y) * 0.5 - 10.0f, bar_title);
     } else {
-        keyfont.draw(line_end.x - font_offset, line_end.y - 10.0, bar_amount);
+        keyfont.draw(line_end.x - font_offset - 10.0, line_end.y - 10.0, bar_amount);
         titlefont.alignTop(false);
         titlefont.draw(line_end.x + (line_start.x-line_end.x) * 0.5 - title_width * 0.5, line_end.y - 5.0, bar_title);
     }
@@ -606,6 +546,8 @@ void StackNode::drawBar(float dt) {
 
     float graph_alpha = graph->getAlpha();
 
+    debugLog("title = %s, alpha = %.2f, graph_alpha = %.2f\n", title.c_str(), alpha, graph_alpha);
+
     float bar_width    = getBarWidth();
     float graph_length = graph->getLength();
 
@@ -614,6 +556,8 @@ void StackNode::drawBar(float dt) {
     float scale_factor = graph->getCurrentScaleFactor();
 
     float scaled_bar_length = graph_length - getTop();
+
+    debugLog("bar_width = %.2f,  graph_length = %.2f, bar_height = %.2f\n", bar_width, graph_length, bar_height);
 
 //  debugLog("x = %.2f, height = %.2f, bar_width = %.2f, current value = %.2f, alpha = %.2f\n", x, graph_height, bar_width, current_value, alpha);
 

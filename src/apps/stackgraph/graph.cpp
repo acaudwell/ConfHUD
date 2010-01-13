@@ -3,18 +3,13 @@
 float gStackGraphFetchDelay     = 0.5;
 bool  gStackGraphDrawBackground = true;
 
-StackGraph::StackGraph(std::string title, std::string logfile) {
-
-    this->title   = title;
-    this->logfile = logfile;
+StackGraph::StackGraph() {
 
     vertical = false;
 
     in_transition = 0.0;
 
     border_colour = vec3f(0.5, 0.5, 0.5);
-
-    activeNode = 0;
 
     debug = false;
 
@@ -31,13 +26,15 @@ StackGraph::StackGraph(std::string title, std::string logfile) {
     keyfont.dropShadow(true);
     keyfont.shadowStrength(gFontShadow);
 
-    theme_black = true;
+    theme_black = false;
 
-    reset();
+    activeNode = 0;
+
+    resetView();
 }
 
 StackGraph::~StackGraph() {
-    delete activeNode;
+    if(activeNode!=0) delete activeNode;
 }
 
 void StackGraph::setColourTheme() {
@@ -47,7 +44,7 @@ void StackGraph::setColourTheme() {
         gTextBaseColour = vec3f(1.0, 1.0, 1.0);
     } else {
         clearcolour = vec3f(1.0, 1.0, 1.0);
-        gTextBaseColour = vec3f(0.5, 0.5, 0.5);
+        gTextBaseColour = vec3f(0.25, 0.25, 0.25);
     }
 }
 
@@ -96,24 +93,20 @@ void StackGraph::resetView() {
     if(activeNode!=0) activeNode->positionChildren();
 }
 
-void StackGraph::reset() {
-    resetView();
-
-    if(activeNode != 0) delete activeNode;
-    activeNode =0;
-
-    setActiveNode(new StackNode(this, title, "var/charity/donations.txt"));
-
-    if(activeNode->getChildCount()==0) {
-        debugLog("failed to load root node (charity/donations)");
-        exit(1);
-    }
-}
-
 void StackGraph::init() {
 }
 
+void StackGraph::updateGraph(StackNode* node) {
+    resetView();
+
+    if(activeNode != 0) delete activeNode;
+    activeNode = 0;
+
+    setActiveNode(node);
+}
+
 void StackGraph::setActiveNode(StackNode* node) {
+
     if(activeNode != 0) activeNode->onBlur();
 
     activeNode = node;
@@ -281,6 +274,9 @@ void StackGraph::updateTransition(float dt) {
 }
 
 void StackGraph::updateScale(float dt) {
+
+    if(activeNode==0) return;
+
     //update active nodes children
     float max_value = activeNode->updateChildren(dt);
 
@@ -289,7 +285,7 @@ void StackGraph::updateScale(float dt) {
         //find next power
         float next;
 
-        for(next = 1.0; next < max_value; next*=10.0);
+        for(next = 1.0; next <= max_value; next*=10.0);
 
         //if quarter of next is greater than value, use that
         if(next*0.25>max_value) {
@@ -310,6 +306,8 @@ void StackGraph::updateScale(float dt) {
 void StackGraph::logic(float t, float dt) {
 
     if(paused) return;
+
+    if(activeNode==0) return;
 
     StackNode* clickedNode = mouseOverNode = 0;
 
@@ -419,6 +417,8 @@ void StackGraph::drawTransition(float dt) {
 }
 
 void StackGraph::draw(float t, float dt) {
+    if(activeNode==0) return;
+
     if(gStackGraphDrawBackground) {
         display.setClearColour(clearcolour);
         display.clear();

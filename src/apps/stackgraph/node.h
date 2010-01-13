@@ -18,7 +18,6 @@ class StackNode {
     float value;
     float current_value;
 
-    std::string logfile;
     std::string title;
 
     float alpha;
@@ -45,14 +44,17 @@ class StackNode {
 
     std::string getNodeFilename();
 public:
-    StackNode(StackGraph* graph, std::string title, std::string logfile);
-    StackNode(StackGraph* graph, StackNode* parent, std::string title, float value);
+    StackNode(StackGraph* graph, std::string title, float value = 0.0f, vec3f colour = vec3f(0.0, 0.0, 0.0));
     ~StackNode();
 
     void onBlur();
     void onFocus();
 
     void showToolTip();
+
+    void setParent(StackNode* parent);
+
+    void addChild(StackNode* child);
 
     int getChildCount();
 

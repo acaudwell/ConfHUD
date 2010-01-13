@@ -20,9 +20,6 @@ void stackgraph_help(std::string error);
 class StackGraph : public SDLApp {
     bool debug;
 
-    std::string title;
-    std::string logfile;
-
     vec3f clearcolour;
     vec3f border_colour;
 
@@ -71,10 +68,11 @@ class StackGraph : public SDLApp {
 
     void toggleVertical();
 
-    void reset();
     void resetView();
 
     void setColourTheme();
+
+    void setActiveNode(StackNode* node);
 
     void drawScaleKey();
     void drawTime();
@@ -83,12 +81,12 @@ class StackGraph : public SDLApp {
     void updateTransition(float dt);
     void updateScale(float dt);
 public:
-    StackGraph(std::string title, std::string logfile);
+    StackGraph();
     ~StackGraph();
 
-    std::string dollarAmount(double num);
+    void updateGraph(StackNode* node);
 
-    void setActiveNode(StackNode* node);
+    std::string dollarAmount(double num);
 
     void setBackgroundColour(vec3f background);
 
