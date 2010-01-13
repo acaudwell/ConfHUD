@@ -10,6 +10,7 @@ void GourceApp::init() {
     float rate = 0.1;
 
     bool hidefilenames=false;
+    bool hidedate=false;
 
     float bloom_intensity = 0.25;
     float bloom_multiplier = 1.0;
@@ -41,6 +42,10 @@ void GourceApp::init() {
         zoomin = true;
     }
 
+    if(config.getBool("gource", "hidedate")) {
+        hidedate = true;
+    }
+
     if((value = config.getString("gource", "hidefilenames")) == "1") {
         hidefilenames = true;
     }
@@ -62,6 +67,7 @@ void GourceApp::init() {
     gGourceDisableProgress = true;
 
     gGourceHideFilenames = hidefilenames;
+    gGourceHideDate      = hidedate;
 
     gGourceBloomMultiplier = bloom_multiplier;
     gGourceBloomIntensity  = bloom_intensity;
