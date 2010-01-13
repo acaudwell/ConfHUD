@@ -160,7 +160,7 @@ void ConfApp::draw() {
         glEnable(GL_TEXTURE_2D);
 
         float fade = elapsed < elapse_time ? 1.0 : 1.0 - (elapsed-elapse_time)/elapsed_fade;
-        glColor4f(1.0, 1.0, 1.0, fade);
+        glColor4f(colour_title.x, colour_title.y, colour_title.z, fade);
 
         FXFont font = fontmanager.grab("FreeSans.ttf", 16);
 

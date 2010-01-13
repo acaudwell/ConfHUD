@@ -35,8 +35,8 @@ protected:
 public:
     ConfApp(std::string conffile);
 
-    void logic(float dt);
-    void draw();
+    virtual void logic(float dt);
+    virtual void draw();
 
     void setTitle(std::string title, std::string subtitle);
 
