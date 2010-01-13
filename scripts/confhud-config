@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+#install a confhud configuration
+
+use strict;
+use warnings;
+
+my($confdir) = @ARGV or die("usage: confhud-config CONFDIR\n");
+
+#check dir has etc/ and var/ and has etc/confhud.conf
+
+die "$confdir/etc does not exist\n"              unless -d "$confdir/etc";
+die "$confdir/etc/confhud.conf does not exist\n" unless -e "$confdir/etc/confhud.conf";
+die "$confdir/var does not exist\n"              unless -d "$confdir/var";
+
+die "could not remove /etc/confhud/*\n"      if system("rm -rf /etc/confhud/*");
+die "could not remove /var/confhud/*\n"      if system("rm -rf /var/confhud/*");
+die "could not remove /etc/cron.d/confhud\n" if system("rm -rf /etc/cron.d/confhud");
+
+die "failed to copy $confdir/etc/* to /etc/confhud\n" if system("cp -r $confdir/etc/* /etc/confhud/");
+die "failed to copy $confdir/var/* to /var/confhud\n" if system("cp -r $confdir/var/* /var/confhud/");
+
+if(-e "$confdir/cron") {
+    system("cp $confdir/cron /etc/cron.d/confhud");
+}
+
+print "config updated.\n\n";
