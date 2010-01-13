@@ -168,6 +168,9 @@ ConfHUD::ConfHUD(std::string conffile) {
     scrollfont.dropShadow(true);
     scrollfont.roundCoordinates(true);
 
+    //hide mouse cursor
+    SDL_ShowCursor(false);
+
     //make footer repeat horizontally
     footer = texturemanager.grab("footer.jpg");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
