@@ -1,0 +1,6 @@
+10:30|Ilott Theatre|Is S.M.A.R.T. really that clever?
+11:30|Ilott Theatre|Flying Rockets with Free Hardware and Free Software
+||Lunch Time
+13:30|Renouf 2|Implementing HTML 5 Video in Firefox
+13:30|Renouf 1|Fibre to the premises - how it will change our world
+15:00|Main Auditorium|Survey of open source databases
