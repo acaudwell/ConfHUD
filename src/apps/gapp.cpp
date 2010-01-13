@@ -18,11 +18,13 @@ void GourceApp::init() {
     bool drawBackground=false;
     bool zoomin=false;
 
+    std::string defaultuserimage;
+
     std::string logfile;
 
     vec3f background(0.1, 0.1, 0.1);
 
-//    srand ( 0 );
+    srand ( time(0) );
 
     std::string value;
 
@@ -62,6 +64,11 @@ void GourceApp::init() {
         background = config.getVec3("gource", "background");
         drawBackground = true;
     }
+
+    defaultuserimage = config.getString("gource", "user-image");
+
+    gGourceDefaultUserImage = defaultuserimage;
+    gGourceColourUserImages = defaultuserimage.size() > 0 ? true : false;
 
     gGourceDrawBackground  = drawBackground;
     gGourceDisableProgress = true;
