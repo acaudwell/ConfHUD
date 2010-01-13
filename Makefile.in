@@ -23,6 +23,8 @@ install: all
 	cp data/*.jpg ${DESTDIR}/$(sdlappdatadir)/
 	cp data/gource.style ${DESTDIR}/$(sdlappdatadir)/
 	cp confhud ${DESTDIR}/$(bindir)/
+	cp scripts/confhud-config ${DESTDIR}/$(bindir)/
+	cp scripts/confhud-fetch ${DESTDIR}/$(bindir)/
 #	mkdir -p -m 755 ${DESTDIR}/$(mandir)/man1
 #         sed 's|CONFHUD_DATADIR|$(sdlappdatadir)|g' data/confhud.1 > ${DESTDIR}/$(mandir)/man1/confhud.1
 #         gzip -f9 ${DESTDIR}/$(mandir)/man1/confhud.1
