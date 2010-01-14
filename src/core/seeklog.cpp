@@ -119,6 +119,8 @@ bool SeekLog::readFully() {
 
     buffstream = new std::istringstream(std::string(filebuffer));
 
+    delete[] filebuffer;
+
     return true;
 }
 
