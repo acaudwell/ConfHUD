@@ -1,6 +1,7 @@
 NAME=confhud
 DAEMON=/usr/local/bin/confhud
 DAEMON_OPTS=""
+USER=pong
 
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 export DISPLAY=":0.0"
@@ -8,23 +9,23 @@ export DISPLAY=":0.0"
 case "$1" in
   start)
         echo -n "Starting daemon: "$NAME
-	start-stop-daemon --start --background --quiet --exec $DAEMON -- $DAEMON_OPTS
+	start-stop-daemon --start --user $USER --background --quiet --exec $DAEMON --chuid $USER -- $DAEMON_OPTS
 	echo "."
 	;;
   stop)
         echo -n "Stopping daemon: "$NAME
-	start-stop-daemon --stop --name confhud --quiet --oknodo
+	start-stop-daemon --stop --user $USER --name $NAME --quiet --oknodo
 	echo "."
 	;;
   reload)
         echo -n "Reloading configuration: "$NAME
-    start-stop-daemon --signal HUP --stop --name confhud --quiet --oknodo
+    start-stop-daemon --signal HUP --stop --name $NAME --quiet --oknodo
 	echo "."
 	;;
   restart)
         echo -n "Restarting daemon: "$NAME
-	start-stop-daemon --stop --name confhud --quiet --oknodo --retry 30
-	start-stop-daemon --start --background --quiet --exec $DAEMON -- $DAEMON_OPTS
+	start-stop-daemon --stop --name $NAME --user $USER --quiet --oknodo --retry 30
+	start-stop-daemon --start --user $USER --background --quiet --exec $DAEMON --chuid $USER -- $DAEMON_OPTS
 	echo "."
 	;;
 
