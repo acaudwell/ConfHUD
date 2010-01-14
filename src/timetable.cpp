@@ -98,7 +98,7 @@ Timetable::Timetable(std::string title, std::string timetablefile) {
     alpha = 0.0;
     fadeout = false;
 
-    entry_height = 35;
+    entry_height = 48;
 
     last_modified_time = 0;
 
@@ -220,7 +220,7 @@ void Timetable::draw(float dt) {
 
     glPushMatrix();
 
-        glTranslatef(0.0, entry_height, 0.0);
+        glTranslatef(0.0, entry_height * 0.82, 0.0);
 
         //draw bookings
         for(std::vector<TimetableEntry*>::iterator it = entries.begin(); it != entries.end(); it++) {

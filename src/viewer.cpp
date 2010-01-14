@@ -145,7 +145,7 @@ void TimetableViewer::draw(float dt) {
     glDisable(GL_TEXTURE_2D);
 
     float entry_height = current->getEntryHeight();
-    float timetable_height = current->getHeight() + 10.0;
+    float timetable_height = current->getHeight();// + 10.0;
     vec2f timetable_corner = vec2f(0.0, 130.0);
 
     float table_alpha = current->getAlpha();
@@ -164,7 +164,7 @@ void TimetableViewer::draw(float dt) {
 
     glPushMatrix();
 
-        glTranslatef(timetable_corner.x, timetable_corner.y - entry_height, 0.0);
+        glTranslatef(timetable_corner.x, timetable_corner.y - entry_height*0.75, 0.0);
 
         float pos1 = 20;
         float pos2 = display.width * 0.25;
