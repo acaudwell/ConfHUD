@@ -44,6 +44,9 @@ StreamLog::StreamLog() {
 #endif
 }
 
+StreamLog::~StreamLog() {
+}
+
 StreamLog::StreamLog(std::istream* stream) {
     this->stream = stream;
 }

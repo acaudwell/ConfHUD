@@ -56,6 +56,8 @@ protected:
     void stop(int return_code);
 public:
     SDLApp();
+    virtual ~SDLApp() {};
+
     int run();
 
     virtual void update(float t, float dt) {};
