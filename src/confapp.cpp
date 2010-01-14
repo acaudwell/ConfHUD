@@ -8,6 +8,7 @@ ConfApp::ConfApp(std::string conffile) {
     prepare_failed  = false;
     ready           = false;
     prepared        = false;
+    finished        = false;
     duration        = 0.0;
     elapsed         = 0.0;
     max_tick_rate   = 0.0;
@@ -20,6 +21,10 @@ ConfApp::ConfApp(std::string conffile) {
     colour_time    = vec3f(1.0, 1.0, 1.0);
     colour_message = vec3f(1.0, 1.0, 1.0);
     colour_visor   = vec4f(1.0, 1.0, 1.0, 0.4);
+}
+
+ConfApp::~ConfApp() {
+    if(app!=0) delete app;
 }
 
 vec3f ConfApp::getColourDescription() {
@@ -55,6 +60,7 @@ bool ConfApp::prepareFailed() {
 }
 
 bool ConfApp::isFinished() {
+    if(finished) return true;
     if(app!=0 && app->isFinished()) return true;
     if(duration>0.0 && elapsed > duration) return true;
 
@@ -153,13 +159,23 @@ void ConfApp::logic(float dt) {
     scaled_t += dt;
     scaled_dt = dt;
 
-    app->logic(scaled_t, scaled_dt);
+    try {
+        app->logic(scaled_t, scaled_dt);
+    } catch(...) {
+        finished = true;
+        return;
+    }
 }
 
 void ConfApp::draw() {
     if(!ready || app->isFinished()) return;
 
-    app->draw(scaled_t, scaled_dt);
+    try {
+        app->draw(scaled_t, scaled_dt);
+    } catch(...) {
+        finished = true;
+        return;
+    }
 
     float elapse_time = 15.0;
     float elapsed_fade = 5.0;

@@ -101,24 +101,33 @@ void GourceApp::init() {
     gGourceDaysPerSecond = rate;
 
     //create Gource object
-    Gource* g = new Gource(logfile);
+    Gource* g = 0;
 
-    g->init();
+    try{
+        g = new Gource(logfile);
+    
+        g->init();
+    
+        //set start position
+        if(start_position>0.0) {
+            g->setStartPosition(start_position);
+        }
+    
+        //show full view of project all the time
+        if(zoomin) {
+            g->setCameraMode(true);
+        }
+    
+        //set background colour
+        g->setBackground(background);
 
-    //set start position
-    if(start_position>0.0) {
-        g->setStartPosition(start_position);
+        app = g;
+
+    } catch(...) {
+        if(g != 0) delete g;
+        ready=false;
+        return;
     }
-
-    //show full view of project all the time
-    if(zoomin) {
-        g->setCameraMode(true);
-    }
-
-    //set background colour
-    g->setBackground(background);
-
-    app = g;
 
     ready=true;
 }

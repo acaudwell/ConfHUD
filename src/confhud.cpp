@@ -397,8 +397,17 @@ ConfApp* ConfHUD::getNextApp() {
 
         if(app != 0) {
             app->prepare();
-            if(!app->prepareFailed()) {
-                app->init();
+
+            if(app->prepareFailed()) {
+                delete app;
+                return 0;
+            }
+
+            app->init();
+
+            if(!app->isReady()) {
+                delete app;
+                return 0;
             }
         }
 
@@ -414,7 +423,7 @@ void ConfHUD::updateConfApp(float dt) {
 
     // TODO: check prepare succeeded, etc
 
-    if(confapp == 0 || nextApp || confapp->isFinished() || confapp->prepareFailed()) {
+    if(confapp == 0 || nextApp || confapp->isFinished()) {
         nextApp = false;
 
         confapp = getNextApp();
@@ -422,7 +431,11 @@ void ConfHUD::updateConfApp(float dt) {
         if(confapp==0) return;
     }
 
-    confapp->logic(dt);
+    try {
+        confapp->logic(dt);
+    } catch(...) {
+        confapp = 0;
+    }
 }
 
 void ConfHUD::drawConfApp(float dt) {

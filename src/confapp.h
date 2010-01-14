@@ -21,6 +21,7 @@ protected:
     bool ready;
     bool prepared;
     bool prepare_failed;
+    bool finished;
 
     std::string title;
     std::string subtitle;
@@ -35,6 +36,7 @@ protected:
     vec4f colour_visor;
 public:
     ConfApp(std::string conffile);
+    virtual ~ConfApp();
 
     virtual void logic(float dt);
     virtual void draw();
