@@ -21,6 +21,7 @@ void GourceApp::init() {
     bool drawBackground=false;
     bool zoomin=false;
 
+    std::string userimagedir;
     std::string defaultuserimage;
 
     std::string logfile;
@@ -70,9 +71,20 @@ void GourceApp::init() {
         drawBackground = true;
     }
 
+    if(config.hasValue("gource", "user-image-dir")) {
+        userimagedir = config.getString("gource", "user-image-dir");
+
+        //append slash
+        if(userimagedir[userimagedir.size()-1] != '/') {
+            userimagedir += std::string("/");
+        }
+    }
+
     defaultuserimage = config.getString("gource", "user-image");
 
     gGourceElasticity = elasticity;
+
+    gGourceUserImageDir = userimagedir;
 
     gGourceDefaultUserImage = defaultuserimage;
     gGourceColourUserImages = defaultuserimage.size() > 0 ? true : false;
