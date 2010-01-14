@@ -152,7 +152,9 @@ void ConfApp::logic(float dt) {
 
     if(duration>0.0) this->elapsed += dt;
 
-    dt = std::min(max_tick_rate, dt);
+    if(max_tick_rate > 0.0) {
+        dt = std::min(max_tick_rate, dt);
+    }
 
     dt *= timescale;
 
