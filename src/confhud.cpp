@@ -479,7 +479,9 @@ void ConfHUD::logic() {
 
     //update scroll bar
     scroll_message_x -= dt * 120.0f;
-    if(scroll_message_x < (-scroll_message_width - 100.0)) scroll_message_x = display.width;
+    if(scroll_message_x < (-scroll_message_width - 100.0)) {
+        updateScrollMessage();
+    }
 
     timetable_viewer->logic(dt);
 
