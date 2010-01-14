@@ -11,6 +11,7 @@ ConfApp::ConfApp(std::string conffile) {
     duration        = 0.0;
     elapsed         = 0.0;
     max_tick_rate   = 0.0;
+    timescale       = 1.0;
     scaled_t        = 0.0;
     scaled_dt       = 0.0;
 
@@ -101,6 +102,14 @@ void ConfApp::prepare() {
          debugLog("vec4f = %.2f, %.2f, %.2f, %.2f\n", colour_visor.x, colour_visor.y, colour_visor.z, colour_visor.w);
     }
 
+    // timescaling
+
+    float timescale = config.getFloat("confapp", "timescale");
+
+    if(timescale > 0.0) {
+        this->timescale = timescale;
+    }
+
     // duration
 
     float duration = config.getFloat("confapp", "duration");
@@ -138,6 +147,8 @@ void ConfApp::logic(float dt) {
     if(duration>0.0) this->elapsed += dt;
 
     dt = std::min(max_tick_rate, dt);
+
+    dt *= timescale;
 
     scaled_t += dt;
     scaled_dt = dt;

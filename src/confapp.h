@@ -13,6 +13,7 @@ protected:
     float elapsed;
 
     float max_tick_rate;
+    float timescale;
 
     float scaled_t;
     float scaled_dt;
