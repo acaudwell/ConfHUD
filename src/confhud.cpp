@@ -309,6 +309,7 @@ void ConfHUD::mouseMove(SDL_MouseMotionEvent *e) {
 void ConfHUD::mouseClick(SDL_MouseButtonEvent *e) {
     if(e->type != SDL_MOUSEBUTTONDOWN) return;
 
+    nextApp = true;
 }
 
 void ConfHUD::keyPress(SDL_KeyboardEvent *e) {
