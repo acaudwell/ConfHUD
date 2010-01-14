@@ -6,8 +6,11 @@ GourceApp::GourceApp(std::string conffile) : ConfApp(conffile) {
 
 void GourceApp::init() {
 
+    srand ( time(0) );
+
     float start_position = ((float) (rand() % 1000)) / 1000.0f;
     float rate = 0.1;
+    float elasticity = 0.0;
 
     bool hidefilenames=false;
     bool hidedate=false;
@@ -24,12 +27,14 @@ void GourceApp::init() {
 
     vec3f background(0.1, 0.1, 0.1);
 
-    srand ( time(0) );
-
     std::string value;
 
     if((value = config.getString("gource", "logfile")) != "") {
         logfile = value;
+    }
+
+    if((value = config.getString("gource", "elasticity")) != "") {
+        elasticity = atof(value.c_str());
     }
 
     if((value = config.getString("gource", "bloom-multiplier")) != "") {
@@ -66,6 +71,8 @@ void GourceApp::init() {
     }
 
     defaultuserimage = config.getString("gource", "user-image");
+
+    gGourceElasticity = elasticity;
 
     gGourceDefaultUserImage = defaultuserimage;
     gGourceColourUserImages = defaultuserimage.size() > 0 ? true : false;
