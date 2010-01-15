@@ -1,19 +1,133 @@
 #!/usr/bin/perl
-#simple script to fetch a file move it to some specified dest file
+#simple script to fetch a file move it to some specified dest file under /var/confhud/
 
 use strict;
 use warnings;
 
 use LWP::Simple;
+use Getopt::Long qw(GetOptions);
 
-my($url, $destfile) = @ARGV or exit;
+my $SCALE_WIDTH  = 1280;
+my $SCALE_HEIGHT = 768;
 
-my $tmpfile = "/tmp/$$.confhud-fetch";
+sub fetch_resource {
+    my($url, $dest) = @_;
 
-my $rc = getstore($url, $tmpfile);
+    print STDERR "fetch_resource($url, $dest)\n";
 
-if($rc == 200) {
-    system('mv', $tmpfile, $destfile);
+    my $tmpfile = "/tmp/$$.confhud-fetch";
+
+    my $rc = getstore($url, $tmpfile);
+
+    if($rc == 200) {
+        if(system('mv', $tmpfile, $dest) == 0) {
+            unlink($tmpfile);
+            return $dest;
+        }
+    }
+
+    unlink($tmpfile);
+    return undef;
 }
 
-unlink($tmpfile);
+sub fetch_image_list {
+    my($url, $dest) = @_;
+
+    die("'$dest' is not a directory\n") unless -d $dest;
+
+    my $tmplist = fetch_resource($url, "/tmp/$$.confhud-image-list")
+        or die("failed to get image list '$url'\n");
+
+    my @remote_images = `cat $tmplist`;
+
+    unlink($tmplist);
+
+    #filter out blank lines and non images
+    @remote_images = grep m{^http://.+\.(?:png|jpe?g|gif|tga)$}i, map { my $img = $_; $img =~ s/[\r\n]+//g; $img; } @remote_images;
+
+    #filter images we already have in $dest
+    my @current_images = map { my $img = $_; $img =~ s{^$dest/}{}; $img; } glob("$dest/*.tga");
+
+    my %current_image = map { $_ => 1 } @current_images;
+    my %seen_image;
+
+    my @new_image_urls;
+
+    foreach my $img_url (@remote_images) {
+        my $tga_image = lc($img_url);
+        $tga_image =~ m{/([^/]+)$} or next;
+        $tga_image = $1;
+        $tga_image =~ s/\.[A-Z]+$/.tga/i;
+
+        if($current_image{$tga_image}) {
+            $seen_image{$tga_image}++;
+        } else {
+            push @new_image_urls, $img_url;
+        }
+    }
+
+    #remove images no longer in image list
+    foreach my $img (@current_images) {
+        next if $seen_image{$img};
+
+        system('rm', "$dest/$img");
+    }
+
+
+    my $tmptga = "/tmp/$$.confhud.tga";
+
+    foreach my $img_url (@new_image_urls) {
+        $img_url =~ m{/([^/]+)$};
+        my $img = $1;
+
+        (my $tgaimg = $img) =~ s/\.[A-Z]+$/.tga/i;
+
+        my $tmpimg = "/tmp/$$.confhud.$img";
+
+        #fetch images, convert them to tga and scale to fit on display
+        if(fetch_resource($img_url, $tmpimg)) {
+            if(system('gm','convert','-scale', $SCALE_WIDTH.'x'.$SCALE_HEIGHT, $tmpimg, "tga:$tmptga")==0) {
+                system('mv', $tmptga, "$dest/$tgaimg");
+            }
+        }
+
+        unlink($tmpimg) if -e $tmpimg;
+    }
+
+    unlink($tmptga) if -e $tmptga;
+
+}
+
+my %opt = (
+    'image-list' => 0,
+);
+
+if(!GetOptions(\%opt, 'image-list|?')) {
+    pod2usage(-exitval => 1,  -verbose => 0);
+}
+
+my($url, $dest) = @ARGV or exit;
+
+$dest ||= '';
+$dest = '/var/confhud/'.$dest unless $dest =~ m{^/var/confhud};
+
+if($opt{'image-list'}) {
+    fetch_image_list($url, $dest);
+} else {
+    fetch_resource($url, $dest) or die("failed to fetch $url\n");
+}
+
+__END__
+
+=head1 NAME
+
+confhud-fetch - fetch a remote resource and move it into place under /var/confhud/
+
+=head1 SYNOPSIS
+
+  confhud-fetch [options] url [destination]
+
+  Options:
+
+   --image-list         indicate the remote resource is a list of images to download and transform for use as a slideshow
+   --help               this message
