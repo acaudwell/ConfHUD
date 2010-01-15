@@ -47,6 +47,13 @@ void SlideShow::logic(float t, float dt) {
     dt = std::min(1.0f/60.0f, dt);
 
     if(image == 0 || alpha <= 0.0 && elapsed >= duration ) {
+
+        //dont loop. if this is the last image, we will stop
+        if(image != 0 && image_index==0) {
+            appFinished=true;
+            return;
+        }
+
         bool success = loadNextImage();
 
         if(!success) {
@@ -56,8 +63,7 @@ void SlideShow::logic(float t, float dt) {
         elapsed = 0.0;
     }
 
-    //dont fade out if only one image
-    if(elapsed >= duration && images.size()>1) {
+    if(elapsed >= duration) {
         alpha = std::max(0.0f, alpha - dt);
     } else {
         alpha = std::min(1.0f, alpha + dt);
