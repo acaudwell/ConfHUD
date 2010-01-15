@@ -158,6 +158,7 @@ ConfHUD::ConfHUD(std::string conffile) {
     logo = 0;
 
     scroll_message_y = display.height - 120;
+    scroll_message_width = 0.0;
 
     font = fontmanager.grab("FreeSans.ttf", 16);
     font.dropShadow(true);
