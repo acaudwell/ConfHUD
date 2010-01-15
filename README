@@ -16,7 +16,11 @@ ConfHUD requires the following libraries to compile:
     FTGL 2.1.3~rc5-2 (libftgl-dev)
     PNG library (libpng12-dev)
     JPEG library (libjpeg62-dev)
-    LWP Simple (libwww-perl)
+
+Additionally, confhud has scripts that use the following packages;
+
+    libwww-perl
+    graphicsmagick
 
 Building on Linux:
 
