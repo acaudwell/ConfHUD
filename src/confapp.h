@@ -23,6 +23,8 @@ protected:
     bool prepare_failed;
     bool finished;
 
+    TextureResource* background_image;
+
     std::string title;
     std::string subtitle;
 

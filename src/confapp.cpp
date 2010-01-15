@@ -16,6 +16,8 @@ ConfApp::ConfApp(std::string conffile) {
     scaled_t        = 0.0;
     scaled_dt       = 0.0;
 
+    background_image = 0;
+
     colour_desc    = vec3f(1.0, 1.0, 1.0);
     colour_title   = vec3f(1.0, 1.0, 1.0);
     colour_time    = vec3f(1.0, 1.0, 1.0);
@@ -25,6 +27,7 @@ ConfApp::ConfApp(std::string conffile) {
 
 ConfApp::~ConfApp() {
     if(app!=0) delete app;
+    if(background_image!=0) delete background_image;
 }
 
 vec3f ConfApp::getColourDescription() {
@@ -124,6 +127,20 @@ void ConfApp::prepare() {
         this->duration = duration;
     }
 
+    // background image
+    std::string backgroundimage = config.getString("confapp", "background_image");
+
+    if(backgroundimage.size()>0) {
+        try {
+
+            TextureResource* newimage = new TextureResource(backgroundimage, 1, 1, 0, true);
+            background_image = newimage;
+
+        } catch(TextureException& exception) {
+            debugLog("failed to load background image '%s'\n", exception.what());
+        }
+    }
+
     // run preprocess script
 
     std::string script = config.getString("confapp", "script");
@@ -171,6 +188,32 @@ void ConfApp::logic(float dt) {
 
 void ConfApp::draw() {
     if(!ready || app->isFinished()) return;
+
+    if(background_image != 0) {
+
+        display.mode2D();
+
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+
+        glBindTexture(GL_TEXTURE_2D, background_image->textureid);
+        glColor4f(1.0, 1.0, 1.0, 1.0);
+        glBegin(GL_QUADS);
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex2f(0.0f, 0.0f);
+
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex2f(display.width, 0.0f);
+
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex2f(display.width, display.height);
+
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex2i(0.0f, display.height);
+        glEnd();
+
+    }
 
     try {
         app->draw(scaled_t, scaled_dt);
