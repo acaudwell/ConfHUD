@@ -429,7 +429,7 @@ void ConfHUD::updateConfApp(float dt) {
         confapp = getNextApp();
 
         //HACK: make 2 attempts in case first app fails to initialze
-        if(confapp==0) getNextApp();
+        if(confapp==0) confapp = getNextApp();
 
         if(confapp==0) return;
     }
