@@ -13,7 +13,7 @@ my $SCALE_HEIGHT = 768;
 sub fetch_resource {
     my($url, $dest) = @_;
 
-    print STDERR "fetch_resource($url, $dest)\n";
+    #print STDERR "fetch_resource($url, $dest)\n";
 
     my $tmpfile = "/tmp/$$.confhud-fetch";
 
