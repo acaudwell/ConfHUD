@@ -56,12 +56,14 @@ void SlideShow::logic(float t, float dt) {
         elapsed = 0.0;
     }
 
-    if(elapsed >= duration) {
+    //dont fade out if only one image
+    if(elapsed >= duration && images.size()>1) {
         alpha = std::max(0.0f, alpha - dt);
     } else {
         alpha = std::min(1.0f, alpha + dt);
         elapsed += dt;
     }
+
 }
 
 vec2f SlideShow::getAspectRatio() {
@@ -176,6 +178,8 @@ void SlideShowApp::init() {
     app = new SlideShow(duration);
     app->init();
 
+    int image_count = 0;
+
     if(imagedir.size()) {
         //append slash
         if(imagedir[imagedir.size()-1] != '/') {
@@ -203,11 +207,12 @@ void SlideShowApp::init() {
             std::string imagefile = imagedir + dirfile;
 
             ((SlideShow*)app)->addImageFile(imagefile);
+            image_count++;
         }
 
         closedir(dp);
     }
 
-    ready=true;
+    if(image_count>0) ready=true;
 }
 
