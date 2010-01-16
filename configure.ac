@@ -62,10 +62,6 @@ AC_CHECK_LIB(png, png_read_info, , AC_MSG_ERROR([PNG library required. Please se
 #JPEG library
 AC_CHECK_LIB(jpeg, jpeg_read_header, , AC_MSG_ERROR([JPEG library required. Please see README]))
 
-#GLEW
-AC_CHECK_LIB(GLEW, glewInit, LIBS="$LIBS -lGLEW", AC_MSG_ERROR([GLEW required. Please see README]))
-CPPFLAGS="$CPPFLAGS -DSDLAPP_SHADER_SUPPORT=1"
-
 #SDL_image library with PNG support
 AC_CHECK_LIB(SDL_image, IMG_LoadPNG_RW, , AC_MSG_ERROR([SDL_image required. Please see README]))
 

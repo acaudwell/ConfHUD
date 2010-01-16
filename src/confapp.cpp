@@ -225,27 +225,22 @@ void ConfApp::draw() {
     float elapse_time = 15.0;
     float elapsed_fade = 5.0;
 
-//    if(elapsed < elapse_time + elapsed_fade) {
-        glActiveTextureARB(GL_TEXTURE0);
-        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-        glEnable(GL_TEXTURE_2D);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
 
-//        float fade = elapsed < elapse_time ? 1.0 : 1.0 - (elapsed-elapse_time)/elapsed_fade;
-//        glColor4f(colour_desc.x, colour_desc.y, colour_desc.z, fade);
-        glColor4f(colour_title.x, colour_title.y, colour_title.z, 1.0);
+    glColor4f(colour_title.x, colour_title.y, colour_title.z, 1.0);
 
-        FXFont font = fontmanager.grab("FreeSans.ttf", 22);
+    FXFont font = fontmanager.grab("FreeSans.ttf", 22);
 
-        font.dropShadow(true);
-        font.alignTop(false);
+    font.dropShadow(true);
+    font.alignTop(false);
 
-        font.draw(10.0, display.height - 10.0, title.c_str());
+    font.draw(10.0, display.height - 10.0, title.c_str());
 
-        font.alignRight(true);
-        font.alignTop(false);
+    font.alignRight(true);
+    font.alignTop(false);
 
-        font.draw(display.width - 10.0, display.height - 10.0, subtitle.c_str());
-//    }
+    font.draw(display.width - 10.0, display.height - 10.0, subtitle.c_str());
 }
 

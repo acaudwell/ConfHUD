@@ -47,9 +47,6 @@ int main(int argc, char *argv[]) {
         display.multiSample(4);
     }
 
-    //needed because we use the glActiveTextureARB extension ...
-    display.enableShaders(true);
-
     //enable vsync
     display.enableVsync(true);
 
