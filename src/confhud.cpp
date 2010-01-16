@@ -260,7 +260,20 @@ void ConfHUD::readTimetables() {
         std::string title = section->getString("title");
         std::string file  = section->getString("file");
 
-        timetable_viewer->addTimetable(title, file);
+        std::string location_label = section->getString("location_label");
+        std::string time_label     = section->getString("time_label");
+
+        Timetable* timetable = new Timetable(title, file);
+
+        if(location_label.size()>0) {
+            timetable->setLocationLabel(location_label);
+        }
+
+        if(time_label.size()>0) {
+            timetable->setTimeLabel(time_label);
+        }
+
+        timetable_viewer->addTimetable(timetable);
     }
 }
 

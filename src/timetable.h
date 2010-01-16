@@ -49,6 +49,8 @@ protected:
 
     std::string title;
 
+    std::string location_label, time_label;
+
     int entry_height;
 
     float alpha;
@@ -64,6 +66,9 @@ protected:
 public:
     Timetable(std::string title, std::string timetablefile);
     ~Timetable();
+
+    void setLocationLabel(std::string label);
+    void setTimeLabel(std::string label);
 
     void fadeIn();
     void fadeOut();

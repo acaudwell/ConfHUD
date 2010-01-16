@@ -104,8 +104,7 @@ void TimetableViewer::switchToNextPopulatedTimetable() {
     current_timetable = -1;
 }
 
-void TimetableViewer::addTimetable(std::string title, std::string timetablefile) {
-    Timetable* timetable = new Timetable(title, timetablefile);
+void TimetableViewer::addTimetable(Timetable* timetable) {
     timetables.push_back(timetable);
 }
 
@@ -165,16 +164,6 @@ void TimetableViewer::draw(float dt) {
     glPushMatrix();
 
         glTranslatef(timetable_corner.x, timetable_corner.y - entry_height*0.75, 0.0);
-
-        float pos1 = 20;
-        float pos2 = display.width * 0.25;
-
-        glColor3fv(gConfHUDColourTitle);
-
-        font.draw(pos1, 0.0, "Room");
-        font.draw(pos2, 0.0, "Time");
-
-        glTranslatef(0.0, 10.0, 0.0);
 
         current->draw(dt);
 

@@ -102,7 +102,18 @@ Timetable::Timetable(std::string title, std::string timetablefile) {
 
     last_modified_time = 0;
 
+    location_label = std::string("Room");
+    time_label     = std::string("Time");
+
     loadTimetable(timetablefile);
+}
+
+void Timetable::setLocationLabel(std::string label) {
+    location_label = label;
+}
+
+void Timetable::setTimeLabel(std::string label) {
+    time_label = label;
 }
 
 bool Timetable::loadTimetable(std::string timetablefile) {
@@ -213,14 +224,18 @@ void Timetable::draw(float dt) {
 
     glColor4f(gConfHUDColourTitle.x, gConfHUDColourTitle.y, gConfHUDColourTitle.z, std::min(1.0f, alpha * 2.0f));
 
+    float pos1 = 20;
+    float pos2 = display.width * 0.25;
     float title_pos = display.width * 0.33;
 
-    //draw title
-    font.draw(title_pos, -10.0, title);
+    //draw entry
+    font.draw(pos1,      0.0, location_label);
+    font.draw(pos2,      0.0, time_label);
+    font.draw(title_pos, 0.0, title);
 
     glPushMatrix();
-
-        glTranslatef(0.0, entry_height * 0.82, 0.0);
+        //glTranslatef(0.0, 10.0, 0.0);
+        glTranslatef(0.0, entry_height, 0.0);
 
         //draw bookings
         for(std::vector<TimetableEntry*>::iterator it = entries.begin(); it != entries.end(); it++) {

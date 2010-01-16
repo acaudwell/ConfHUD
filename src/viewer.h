@@ -37,7 +37,7 @@ public:
     TimetableViewer();
     ~TimetableViewer();
 
-    void addTimetable(std::string title, std::string timetablefile);
+    void addTimetable(Timetable* timetable);
 
     void setDuration(float duration);
 
