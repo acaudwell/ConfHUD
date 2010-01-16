@@ -111,7 +111,7 @@ void StackGraph::setActiveNode(StackNode* node) {
 
     activeNode = node;
 
-    activeNode->onFocus();
+//    activeNode->onFocus();
 }
 
 void StackGraph::update(float t, float dt) {
@@ -300,7 +300,7 @@ void StackGraph::updateScale(float dt) {
     }
 
     //move current scale to wards scale
-    current_scale_factor += (scale_factor-current_scale_factor) * dt;
+    current_scale_factor += (scale_factor-current_scale_factor) * dt * 3.0;
 }
 
 void StackGraph::logic(float t, float dt) {
@@ -346,8 +346,7 @@ void StackGraph::logic(float t, float dt) {
 
     if(last_update > gStackGraphFetchDelay) {
         last_update = 0.0;
-
-        activeNode->fetchBets();
+//        activeNode->fetchBets();
     }
 
     last_update += dt;

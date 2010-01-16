@@ -32,6 +32,8 @@ StackNode::StackNode(StackGraph* graph, std::string title, float value, vec3f co
     this->value = value;
     current_value = 0.0;
 
+    show_tooltip = false;
+
     alpha = 0.0;
 
     setColour(colour);
@@ -171,7 +173,7 @@ void StackNode::onBlur() {
 
 void StackNode::onFocus() {
 
-    title_alpha = 0.0;
+//    title_alpha = 1.0;
 
     //highlight the min and max nodes
     if(children.size() == 0) return;
@@ -240,7 +242,13 @@ bool StackNode::mouseOver(vec2f pos) {
     return false;
 }
 
+void StackNode::addBet(StackNode* node, float amount) {
+    StackBet* bet = new StackBet(node, amount);
+    bets.push_back(bet);
+}
+
 //simulate betting activity
+/*
 void StackNode::fetchBets() {
 
     // TODO: check if our value > total of the children?
@@ -258,6 +266,7 @@ void StackNode::fetchBets() {
         bets.push_back(bet);
     }
 }
+*/
 
 void StackNode::setTitleSize(int size) {
     this->title_size = size;
@@ -315,7 +324,7 @@ void StackNode::updateBets(float dt) {
 }
 
 void StackNode::showToolTip() {
-    tooltip_alpha = 10.0;
+    show_tooltip = true;
 }
 
 void StackNode::logic(float dt) {
@@ -331,7 +340,14 @@ void StackNode::logic(float dt) {
     if(recent_mouse_over>0.0) recent_mouse_over -= dt*3.0;
     if(modified>0.0) modified -= dt;
 
-    if(tooltip_alpha>0.0) tooltip_alpha -= dt;
+    if(show_tooltip) {
+        if(tooltip_alpha < 10.0) tooltip_alpha += dt;
+        if(tooltip_alpha >=10.0) {
+            tooltip_alpha = 10.0;
+            show_tooltip = false;
+        }
+    }
+    else if(tooltip_alpha>0.0) tooltip_alpha -= dt;
 }
 
 void StackNode::setColour(vec3f colour) {

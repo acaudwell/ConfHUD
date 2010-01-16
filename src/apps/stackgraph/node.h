@@ -40,6 +40,8 @@ class StackNode {
     std::list<StackBet*> bets;
     std::vector<StackNode*> children;
 
+    bool show_tooltip;
+
     bool initNode();
 
     std::string getNodeFilename();
@@ -89,7 +91,7 @@ public:
     void setValue(float value);
     void addValue(float value);
 
-    void fetchBets();
+    void addBet(StackNode* node, float amount);
 
     void updateBets(float dt);
     float updateChildren(float dt);
