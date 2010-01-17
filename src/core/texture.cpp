@@ -73,6 +73,8 @@ TextureResource::TextureResource(std::string file, int mipmaps, int clamp, int t
     if(format==0) throw TextureException(file);
 
     textureid = display.createTexture(w, h, mipmaps, clamp, trilinear, format, (unsigned int*) surface->pixels);
+
+    delete surface;
 }
 
 int TextureResource::colourFormat(SDL_Surface* surface) {
