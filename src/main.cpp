@@ -20,9 +20,11 @@
 int main(int argc, char *argv[]) {
 
     int width  = 1280;
-    int height = 768;
-    bool fullscreen=true;
-    bool multisample=false;
+    int height = 720;
+
+    bool fullscreen  = true;
+    bool multisample = false;
+
     vec3f background = vec3f(0.25, 0.25, 0.25);
 
     std::vector<std::string> arguments;
