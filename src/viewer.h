@@ -28,7 +28,7 @@ protected:
     int current_timetable;
     bool next_timetable;
 
-    float duration, elapsed;
+    float duration, interval, elapsed;
 
     Timetable* getCurrentTimetable();
     void fadeOutCurrent();
@@ -40,6 +40,7 @@ public:
     void addTimetable(Timetable* timetable);
 
     void setDuration(float duration);
+    void setInterval(float interval);
 
     void reset();
 

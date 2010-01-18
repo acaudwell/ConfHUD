@@ -75,7 +75,7 @@ public:
 
     float getAlpha();
 
-    bool isVisible();
+    bool isFinished(float interval);
 
     bool loadTimetable(std::string timetablefile);
 

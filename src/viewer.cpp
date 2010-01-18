@@ -21,6 +21,7 @@
 
 TimetableViewer::TimetableViewer() {
     this->duration = 15.0;
+    this->interval = 0.0;
 
     font = fontmanager.grab("FreeSans.ttf", 32);
     font.shadowStrength(0.4);
@@ -45,6 +46,10 @@ void TimetableViewer::reset() {
     }
 
     timetables.clear();
+}
+
+void TimetableViewer::setInterval(float interval) {
+    this->interval = interval;
 }
 
 void TimetableViewer::setDuration(float duration) {
@@ -117,7 +122,7 @@ void TimetableViewer::logic(float dt) {
 
     Timetable* current = getCurrentTimetable();
 
-    if(next_timetable && (current==0|| !current->isVisible())) {
+    if(next_timetable && (current==0|| current->isFinished(interval))) {
         switchToNextPopulatedTimetable();
 
         //regardless of success or not, we will set set next_timetable to false

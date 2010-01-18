@@ -205,14 +205,14 @@ float Timetable::getAlpha() {
     return alpha;
 }
 
-bool Timetable::isVisible() {
-    return alpha > 0.0;
+bool Timetable::isFinished(float interval) {
+    return (alpha <= -interval && fadeout);
 }
 
 void Timetable::logic(float dt) {
 
     if(fadeout) {
-        if(alpha>0.0) alpha = std::max(0.0f, alpha - dt);
+        alpha -= dt;
     } else {
         if(alpha<1.0) alpha = std::min(1.0f, alpha + dt);
     }
@@ -222,7 +222,9 @@ void Timetable::draw(float dt) {
 
     glEnable(GL_TEXTURE_2D);
 
-    glColor4f(gConfHUDColourTitle.x, gConfHUDColourTitle.y, gConfHUDColourTitle.z, std::min(1.0f, alpha * 2.0f));
+    float current_alpha = std::max(0.0f, alpha);
+
+    glColor4f(gConfHUDColourTitle.x, gConfHUDColourTitle.y, gConfHUDColourTitle.z, std::min(1.0f, current_alpha * 2.0f));
 
     float pos1 = 20;
     float pos2 = display.width * 0.25;
@@ -240,7 +242,7 @@ void Timetable::draw(float dt) {
         //draw bookings
         for(std::vector<TimetableEntry*>::iterator it = entries.begin(); it != entries.end(); it++) {
             TimetableEntry* entry = *it;
-            entry->draw(dt, alpha);
+            entry->draw(dt, current_alpha);
             glTranslatef(0.0, entry_height, 0.0);
         }
 
