@@ -87,7 +87,9 @@ void StackApp::logic(float dt) {
 
             if(remaining>0.0) {
 
-                if(remaining<unit) {
+                float d = floor(remaining*0.667);
+
+                if(d<=1.0) {
 
                     //avoid $0 appearing
                     if(remaining>=1.0) chart->addBet(node, remaining);
@@ -95,8 +97,6 @@ void StackApp::logic(float dt) {
                     bar_amount[node] = 0.0;
 
                 } else {
-                    float d = unit;
-
                     chart->addBet(node, d);
 
                     remaining -= d;
@@ -134,7 +134,7 @@ void StackApp::draw() {
 //    glColor4f(colour_title.x, colour_title.y, colour_title.z, 1.0);
     glColor4f(0.0, 0.0, 0.0, 1.0);
 
-    font.print(display.width-10, display.height-35, "%s: $%d", total_label.c_str(), (int) totalamount);
+    font.print(display.width-10, display.height-45, "%s: $%d", total_label.c_str(), (int) totalamount);
 }
 
 void StackApp::init() {

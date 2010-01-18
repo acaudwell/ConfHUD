@@ -506,7 +506,7 @@ void StackGraph::draw(float t, float dt) {
     titlefont.print(section_bounds.min.x + width*0.5 - title_width*0.5, section_bounds.min.y + section_bounds.height()*0.5 - title_height*0.5, "%s", section_title.c_str());
 
     //time
-    drawTime();
+    //drawTime();
 
     // UI
     glPopMatrix();
