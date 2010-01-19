@@ -238,10 +238,13 @@ void ConfHUD::readTimetables() {
     }
 
     float viewer_duration = ttconf.getFloat("settings", "duration");
+    float viewer_interval = ttconf.getFloat("settings", "interval");
 
     //check the value is sensible
     if(viewer_duration<1.0) viewer_duration = 15.0;
+
     timetable_viewer->setDuration(viewer_duration);
+    timetable_viewer->setInterval(viewer_interval);
 
     timetable_viewer->reset();
 
