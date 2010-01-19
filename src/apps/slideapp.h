@@ -24,6 +24,7 @@ public:
     ~SlideShow();
 
     void addImageFile(std::string imagefile);
+    void randomize();
 
     void logic(float t, float dt);
     void draw(float t, float dt);

@@ -18,6 +18,10 @@ void SlideShow::addImageFile(std::string imagefile) {
     images.push_back(imagefile);
 }
 
+void SlideShow::randomize() {
+    std::random_shuffle(images.begin(), images.end());
+}
+
 bool SlideShow::loadNextImage() {
     if(images.size()==0) return false;
 
@@ -217,6 +221,8 @@ void SlideShowApp::init() {
         }
 
         closedir(dp);
+
+	((SlideShow*)app)->randomize();
     }
 
     if(image_count>0) ready=true;
