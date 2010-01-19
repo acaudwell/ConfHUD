@@ -2,6 +2,7 @@
 #define SLIDESHOW_CONFAPP_H
 
 #include <dirent.h>
+#include <algorithm>
 
 #include "confapp.h"
 
