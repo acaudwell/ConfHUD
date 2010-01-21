@@ -17,11 +17,13 @@ class SlideShow : public SDLApp {
     float elapsed;
     float alpha;
 
+    vec2f screen_ratio;
+
     bool loadNextImage();
 
     vec2f getAspectRatio();
 public:
-    SlideShow(float image_duration);
+    SlideShow(float image_duration, vec2f screen_ratio);
     ~SlideShow();
 
     void addImageFile(std::string imagefile);

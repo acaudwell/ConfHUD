@@ -2,8 +2,10 @@
 
 //SlideShow
 
-SlideShow::SlideShow(float image_duration) : SDLApp() {
-    duration = image_duration;
+SlideShow::SlideShow(float duration, vec2f screen_ratio) : SDLApp() {
+    this->duration = duration;
+    this->screen_ratio = screen_ratio;
+    
     image = 0;
     image_index = 0;
     elapsed = 0.0;
@@ -80,8 +82,8 @@ vec2f SlideShow::getAspectRatio() {
 
     vec2f aspectRatio;
 
-    float sratiox = display.width  / (float) display.height;
-    float sratioy = display.height / (float) display.width;
+    float sratiox = screen_ratio.x / screen_ratio.y;
+    float sratioy = screen_ratio.y / screen_ratio.x;
 
     //calc aspect raio
     float ratiox = image->w / (float) image->h;
@@ -185,7 +187,13 @@ void SlideShowApp::init() {
 
     if(duration==0.0f) duration = 10.0f;
 
-    app = new SlideShow(duration);
+    vec2f screen_ratio = config.getVec2("slideshow", "screen_ratio");
+
+    if(screen_ratio.x <= 0.0 || screen_ratio.y <= 0.0) {
+        screen_ratio = vec2f(display.width, display.height);
+    }
+
+    app = new SlideShow(duration, screen_ratio);
     app->init();
 
     int image_count = 0;
