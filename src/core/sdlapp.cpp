@@ -84,7 +84,6 @@ void SDLAppInit() {
 
 #ifdef SDLAPP_CONF_DIR
     if (SDLAppDirExists(SDLAPP_CONF_DIR)) {
-        debugLog("conf dir test = %s\n", SDLAPP_CONF_DIR);
         conf_dir = SDLAPP_CONF_DIR;
     }
 #endif
@@ -110,7 +109,7 @@ void SDLAppInit() {
     fontmanager.setDir(fonts_dir);
 
     gSDLAppResourceDir = resource_dir;
-    gSDLAppConfDir = conf_dir;
+    gSDLAppConfDir     = conf_dir;
 }
 
 void SDLAppParseArgs(int argc, char *argv[], int* xres, int* yres, bool* fullscreen, std::vector<std::string>* otherargs) {
