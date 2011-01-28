@@ -89,7 +89,6 @@ void GourceApp::init() {
     gGourceDefaultUserImage = defaultuserimage;
     gGourceColourUserImages = defaultuserimage.size() > 0 ? true : false;
 
-    gGourceDrawBackground  = drawBackground;
     gGourceDisableProgress = true;
 
     gGourceHideFilenames = hidefilenames;
