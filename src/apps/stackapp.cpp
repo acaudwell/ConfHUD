@@ -131,8 +131,8 @@ void StackApp::draw() {
     font.alignTop(false);
     font.alignRight(true);
 
-//    glColor4f(colour_title.x, colour_title.y, colour_title.z, 1.0);
-    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glColor4f(colour_title.x, colour_title.y, colour_title.z, 1.0);
+//    glColor4f(0.0, 0.0, 0.0, 1.0);
 
     font.print(display.width-10, display.height-45, "%s: $%d", total_label.c_str(), (int) totalamount);
 }
