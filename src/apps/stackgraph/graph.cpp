@@ -26,7 +26,7 @@ StackGraph::StackGraph() {
     keyfont.dropShadow(true);
     keyfont.shadowStrength(gFontShadow);
 
-    theme_black = false;
+    theme_black = true;
 
     activeNode = 0;
 
