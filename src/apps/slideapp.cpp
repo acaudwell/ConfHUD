@@ -117,7 +117,7 @@ void SlideShow::draw(float t, float dt) {
 
     vec2f ratio = getAspectRatio();
 
-    float max_percent = 0.9f;
+    float max_percent = 1.0f;
 
     float scaled_w = display.width * ratio.x * max_percent;
     float scaled_h = display.height * ratio.y * max_percent;
