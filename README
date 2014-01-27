@@ -22,6 +22,9 @@ Additionally, confhud has scripts that use the following packages;
     libwww-perl
     graphicsmagick
 
+You will also need an old copy of the Gource source tarball
+compatible with ConfHUD (0.23 is known to work).
+
 Building on Linux:
 
     ./configure
@@ -30,7 +33,7 @@ Building on Linux:
 Installation:
 
     make install
-    confhud-config config/example
+    scripts/confhud-config config/example
 
 Will install the example config from the config/example sub directory.
 
